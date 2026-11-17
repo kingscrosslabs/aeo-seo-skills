@@ -79,7 +79,9 @@ class Page(HTMLParser):
             self.imgs += 1
             alt = (a.get("alt") or "").strip()
             src = a.get("src") or ""
-            if a.get("alt") is None or (alt and alt.lower() in src.lower()):
+            stem = src.split("?")[0].rsplit("/", 1)[-1].rsplit(".", 1)[0].lower()
+            looks_like_file = bool(re.search(r"\.(png|jpe?g|webp|gif|svg|avif)$", alt.lower())) or (alt and " " not in alt and alt.lower() == stem and ("-" in alt or "_" in alt))
+            if a.get("alt") is None or looks_like_file:
                 self.imgs_no_alt += 1
         elif tag == "a" and a.get("href"):
             href = urljoin(self.base, a["href"]).split("#")[0]
@@ -95,7 +97,7 @@ class Page(HTMLParser):
         elif tag == "title" and self._in == "title":
             self.title, self._in = self._buf.strip(), None
         elif tag == "h2" and self._in == "h2":
-            self.h2_text.append(self._buf.strip())
+            self.h2_text.append(self._buf.strip().rstrip("#¶§🔗 ").strip())
             self._in = None
 
     def handle_data(self, data):
