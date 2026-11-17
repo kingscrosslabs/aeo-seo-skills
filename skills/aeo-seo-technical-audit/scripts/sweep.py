@@ -16,7 +16,7 @@ from collections import Counter
 from html.parser import HTMLParser
 from urllib.parse import urljoin, urlparse
 
-UA = "Mozilla/5.0 (compatible; aeo-seo-foundations-sweep/1.0)"
+UA = "Mozilla/5.0 (compatible; aeo-seo-technical-audit-sweep/1.0)"
 
 
 def fetch(url, timeout=20):

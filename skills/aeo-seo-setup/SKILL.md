@@ -5,7 +5,7 @@ description: Builds or updates the site's AEO/SEO profile (an aeo-seo/ folder in
 
 # AEO/SEO Setup
 
-Builds the `aeo-seo/` folder that every other skill in this repo reads before doing anything: what the site is, how its pages get made and shipped, what the product is and who it's for, who it competes with, what's already been decided, and the research so far. Most of it comes from reading the repo and the live site; the user only answers what those can't. This skill doesn't fix the site or write pages: missing site-wide pieces (sitemap, `llms.txt`, JSON-LD) go to `aeo-seo-foundations`, and the first pages come from `topic-plan`.
+Builds the `aeo-seo/` folder that every other skill in this repo reads before doing anything: what the site is, how its pages get made and shipped, what the product is and who it's for, who it competes with, what's already been decided, and the research so far. Most of it comes from reading the repo and the live site; the user only answers what those can't. This skill doesn't fix the site or write pages: missing site-wide pieces (sitemap, `llms.txt`, JSON-LD) go to `aeo-seo-technical-audit`, and the first pages come from `topic-plan`.
 
 **The finished folder:**
 
@@ -96,6 +96,6 @@ Before calling it done:
 
 ## Related skills
 
-- `aeo-seo-foundations`: next, when the "What the site does automatically" checklist has gaps.
+- `aeo-seo-technical-audit`: next, when the "What the site does automatically" checklist has gaps.
 - `topic-plan`: next, to pick the first cluster of pages.
 - `aeo-seo-weekly`: once pages are live, the weekly routine.

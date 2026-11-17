@@ -26,7 +26,7 @@ skills/<skill>/
 
 Flat layout: every skill is one folder under `skills/`, because agents only find skills one level down.
 
-**Names:** `aeo-seo-` for skills that work on the whole site (`aeo-seo-setup`, `aeo-seo-weekly`, `aeo-seo-foundations`). Page skills use plain names for the page they make (`blog-post`, `comparison-page`).
+**Names:** `aeo-seo-` for skills that work on the whole site (`aeo-seo-setup`, `aeo-seo-weekly`, `aeo-seo-technical-audit`). Page skills use plain names for the page they make (`blog-post`, `comparison-page`).
 
 **Shared references.** Skills install one at a time, so each skill carries its own copy of any reference it needs (for example `references/de-ai-checklist.md`). Never point at another skill's folder.
 

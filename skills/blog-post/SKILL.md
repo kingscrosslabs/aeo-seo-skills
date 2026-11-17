@@ -32,7 +32,7 @@ Never state a fact about the product that isn't in one of the fact sources `prod
 - The blog's own README or template, if `site.md` points to one. It sets the post format: which fields exist (short answer, description, CTA, related pages, author, draft flag, dates) and what they're called.
 - `query-bank.md`, `experience-bank.md`, `user-questions.md`, and `research/` for this topic.
 
-If `site.md` has no Blog post row, the site has no blog yet. Say so and stop: the post needs a home first. Offer to work out the URL pattern, file format and template with the user (and `aeo-seo-foundations` for the sitemap and structured data), then add the row to `site.md`.
+If `site.md` has no Blog post row, the site has no blog yet. Say so and stop: the post needs a home first. Offer to work out the URL pattern, file format and template with the user (and `aeo-seo-technical-audit` for the sitemap and structured data), then add the row to `site.md`.
 
 ## Step 2: Intake
 
@@ -236,5 +236,5 @@ Before showing the final review, confirm:
 - `topic-plan`: decides which posts to write and in what order. Run it first when the user asks what to write about.
 - `comparison-page`: for "<product> vs <competitor>" and "<competitor> alternative" pages.
 - `aeo-seo-weekly`: runs this skill in batches and decides which posts need an update.
-- `aeo-seo-foundations`: for site-wide gaps the post exposes (no structured data, no sitemap entry, no `llms.txt`).
+- `aeo-seo-technical-audit`: for site-wide gaps the post exposes (no structured data, no sitemap entry, no `llms.txt`).
 - `aeo-seo-setup`: builds the site profile this skill reads.

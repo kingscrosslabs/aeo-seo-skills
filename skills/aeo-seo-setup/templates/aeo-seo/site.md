@@ -48,7 +48,7 @@ The facts about the website itself. The skills read this to know where pages go,
 
 ## What the site does automatically
 
-<!-- So the skills don't hand-edit these. Tick what exists; `aeo-seo-foundations` adds what's missing. -->
+<!-- So the skills don't hand-edit these. Tick what exists; `aeo-seo-technical-audit` adds what's missing. -->
 
 - [ ] Sitemap
 - [ ] robots.txt

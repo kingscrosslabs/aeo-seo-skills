@@ -1,11 +1,11 @@
 ---
-name: aeo-seo-foundations
-description: Audits the live site against 26 foundation checks for Google and AI answer engines (quotable pages, getting found faster, consistent URLs, and a setup that runs itself), grades each theme, and delivers a visual HTML report that teaches the principle behind every issue and gives a ready-to-run fix prompt. After the user picks fixes, implements them in parallel with subagents on a branch, then re-audits the live site to prove they stuck. Use when the user says "AEO audit", "SEO audit", "audit my site", "technical SEO", "AEO foundations", "set up llms.txt", "schema markup", "make my site readable by AI", "re-audit", or when aeo-seo-setup finds gaps.
+name: aeo-seo-technical-audit
+description: Runs a technical AEO/SEO audit of the live site against 26 checks for Google and AI answer engines (quotable pages, getting found faster, consistent URLs, and a setup that runs itself), grades each theme, and delivers a visual HTML report that teaches the principle behind every issue and gives a ready-to-run fix prompt. Splits the fixes into what the AI coding agent can do in the code and what needs the user to log in and click (Search Console, Bing Webmaster Tools, analytics, DNS). Implements the agent's fixes in parallel with subagents on a branch, then re-audits the live site a week later to show progress. Use when the user says "technical audit", "AEO audit", "SEO audit", "audit my site", "technical SEO", "set up llms.txt", "schema markup", "make my site readable by AI", "re-audit", or when aeo-seo-setup finds gaps.
 ---
 
-# AEO/SEO Foundations
+# AEO/SEO Technical Audit
 
-Makes the whole site easy to crawl, index, trust and quote, once, so every page the other skills write inherits it. It runs in three passes: a **plan-only audit** with a visual HTML report, **implementation** by parallel subagents once the user picks the fixes, and a **re-audit** of the live site to prove the fixes stuck. It fixes site code, templates and site-wide sweeps (missing descriptions, alt text, headings). It doesn't write new pages or plan topics; those are `blog-post` and `topic-plan`.
+Makes the whole site easy to crawl, index, trust and quote, once, so every page the other skills write inherits it. It runs in three passes: a **plan-only audit** with a visual HTML report, **implementation** once the user picks the fixes (the agent's share by parallel subagents, the user's share as a click-by-click list), and a **re-audit** of the live site a week later to show what moved. It fixes site code, templates and site-wide sweeps (missing descriptions, alt text, headings). It doesn't write new pages or plan topics; those are `blog-post` and `topic-plan`.
 
 **The idea behind the method:**
 - **Audit before you touch anything.** You can't fix what you can't see, and the user should agree with the plan before code changes.
@@ -67,7 +67,19 @@ Write one finding per failed or partial check. Merge checks that share a cause (
 - **Principle:** why it matters, in two or three sentences someone new to SEO would understand. Teach the idea, so the user can spot the next one alone.
 - **Fix prompt:** a copy-paste prompt that would fix it in this repo. It names the files, says what done looks like, and says how to verify on the live site.
 - **Effort:** S (under an hour), M (half a day) or L (more).
-- **Owner:** `agent` (code in the repo) or `user` (an account task: Search Console, Bing Webmaster Tools, analytics settings, a DNS change).
+- **Owner:** who has to act. See [Who does what](#who-does-what).
+
+### Who does what
+
+Every finding gets one owner, and the report and the chat summary always keep the two lists apart, so the user knows exactly what lands on their plate:
+
+| Owner | Meaning | Typical findings |
+|---|---|---|
+| **Agent** | The AI coding agent can do it alone in the repo: code, templates, config, content files. The user only reviews and approves. | Canonicals, `og:*`, meta descriptions, JSON-LD, sitemap, robots.txt, llms.txt, IndexNow, redirects in config, alt text, headings, FAQs, noindex on thin pages, analytics snippet |
+| **You** | Needs the user's login and clicks in a dashboard the agent can't reach, or a decision only they can make. | Submit the sitemap in Google Search Console, verify the site and import it in Bing Webmaster Tools, add a DNS verification record, turn off bot blocking in the host's firewall or CDN, set up an AI-referrer segment in analytics, approve which pages to noindex |
+| **Agent, then you** | The agent prepares everything (the exact value, the file, the steps), then the user does the final click. | A DNS TXT record the agent wrote out, a redirect only the hosting dashboard can set, a Search Console URL inspection after deploy |
+
+Write every "You" and "Agent, then you" item as numbered click-by-click steps: where to go, what to click, what to paste, and what they should see when it worked. If the agent can't do something, say why in one line ("this needs your Google login").
 
 Then write two more sections:
 - **What's already good:** the passes worth keeping, in one line each, so the user knows what not to break.
@@ -75,19 +87,29 @@ Then write two more sections:
 
 ## Step 5: Build the report (approval gate)
 
-1. Copy `references/report-template.html` to `research/audits/foundations-<YYYY-MM-DD>.html` in the profile and fill it in, following the comments in the template: the header, the scorecards, the mental model, the findings grouped by severity, what's good, the rules for new pages, and the action plan.
-2. **Action plan:** every finding in one table, ordered by severity, then effort. Group the agent-owned rows into **fix packages** (see Step 6) and show which package each row belongs to. User-owned rows go in their own "Your to-dos" list with the exact steps.
-3. Remove every template comment and example, and check the page renders in light and dark mode at phone width.
-4. Open the report in the browser for the user, then summarize in chat: the overall and theme grades, the 3–5 findings that matter most, the packages, and the user's to-dos.
-5. **Ask which packages to implement.** Recommend the critical ones first. In audit-only mode, stop here.
+1. Copy `references/report-template.html` to `research/audits/technical-audit-<YYYY-MM-DD>.html` in the profile and fill it in, following the comments in the template: the header, the scorecards, the mental model, the findings grouped by severity, what's good, the rules for new pages, and the action plan.
+2. **Action plan, in two columns:**
+   - **What your AI agent will do:** every agent-owned finding, ordered by severity then effort, grouped into **fix packages** (see Step 6).
+   - **What needs you:** every "You" and "Agent, then you" finding, with the click-by-click steps and roughly how long each takes.
+3. **Next audit date:** a week from today, at the bottom of the report.
+4. Remove every template comment and example, and check the page renders in light and dark mode at phone width.
+5. Open the report in the browser for the user, then summarize in chat in this order:
+   - the overall and theme grades, and the 3–5 findings that matter most
+   - **I can do these for you:** the fix packages, one line each
+   - **These need you:** the user's items, one line each with the time it takes, pointing to the steps in the report
+6. **Ask which packages to implement.** Recommend the critical ones first. In audit-only mode, stop here.
 
-Log it in `aeo-seo-log.md` under today's date: `- [research] Foundations audit: overall <grade> (A <g>, B <g>, C <g>, D <g>). Report: research/audits/foundations-<date>.html.`
+Log it in `aeo-seo-log.md` under today's date: `- [research] Technical audit: overall <grade> (A <g>, B <g>, C <g>, D <g>). Report: research/audits/technical-audit-<date>.html.`
 
-## Step 6: Implement with subagents
+## Step 6: Implement
 
-Only the packages the user approved.
+Two tracks run side by side: the agent's packages through subagents, and the user's clicks.
 
-1. **Branch.** Create one branch for the batch from the default branch, as `site.md` → Shipping describes (`aeo-seo-foundations-<date>` unless the site has a naming rule). Never work on the default branch.
+**The user's track.** As soon as the user approves, give them their list again, in order, with the steps. Prepare anything they need first (a DNS value, the sitemap URL to paste, the analytics filter). Start on the agent's track without waiting; check off each user item as they report it done.
+
+**The agent's track.** Only the packages the user approved.
+
+1. **Branch.** Create one branch for the batch from the default branch, as `site.md` → Shipping describes (`aeo-seo-technical-audit-<date>` unless the site has a naming rule). Never work on the default branch.
 2. **Plan the packages so no two touch the same file.** A package is one or more findings that share files. The usual split:
 
    | Package | Typical findings | Typical files |
@@ -110,27 +132,34 @@ Only the packages the user approved.
 Show the user:
 - each package: what changed, the files, and the finding IDs it closes
 - the check and build results, and anything that still fails
-- anything a subagent couldn't finish, and why
-- the user's to-dos from the report, still open
+- anything a subagent couldn't finish, and why, and whether it moves to the user's list
+- **Still needs you:** the user's items not yet done, with their steps, and which fixes depend on them (for example, the new sitemap only helps Google once it's submitted)
 
-Wait for explicit approval. Then ship the way `site.md` → Shipping says (usually a pull request for site code). After the deploy, go to Step 8.
+Wait for explicit approval. Then ship the way `site.md` → Shipping says (usually a pull request for site code).
 
-## Step 8: Re-audit the live site
+After the deploy, check on the live site that each package landed (the canonical in the production HTML, the sitemap, the JSON-LD), and end with the next steps:
+- **You:** any items still open, plus requesting indexing in Search Console for the 3–5 most important changed pages.
+- **Re-run this audit in a week** (give the date) to see what moved. Search engines need a few days to recrawl, so a week is the first useful check.
 
-Run Steps 3 and 4 again on production, and write a follow-up report from the same template:
+## Step 8: Re-audit a week later
+
+When the user comes back (or `aeo-seo-weekly` runs it), run Steps 3 and 4 again on production, and write a follow-up report from the same template:
 - Before and after grades for each theme and overall.
 - **Verified on the live site:** each fixed finding, with the URL and the evidence that it's live (the canonical in the production HTML, the sitemap entry, the JSON-LD type).
-- **Still open:** findings not fixed, and any regressions.
-- Save it as `research/audits/foundations-<YYYY-MM-DD>-followup.html`.
+- **Still open:** findings not fixed, and any regressions, split again into what the agent can do and what needs the user.
+- **Search progress:** Search Console's last 7 days against the `[baseline]` (impressions, clicks, pages indexed). Say plainly that early numbers are a signal, not a verdict; the full effect takes 2–4 weeks.
+- Save it as `research/audits/technical-audit-<YYYY-MM-DD>-followup.html`.
 
 Then close the loop:
 - Tick what's now automatic in `site.md` → "What the site does automatically", and add the check command to `site.md` → Commands if the D2 fix added one.
-- Log `- [change] Foundations fixes live: <finding IDs>. Overall <before> → <after>.` and add a `[decision]` and a Decisions table row for any standing choice the user made (for example, blocking training bots).
-- Search Console shows the effect in 1–4 weeks. Suggest a `[baseline]` entry with today's 28-day numbers to compare against.
+- Log `- [change] Technical audit fixes live: <finding IDs>. Overall <before> → <after>.` and add a `[decision]` and a Decisions table row for any standing choice the user made (for example, blocking training bots).
+- End with the next steps: what's left for the agent, what's left for the user, and **run this report again in a week**.
 
 ## Re-auditing
 
-Re-run the audit after any big batch of new pages, after a redesign or a framework upgrade, and at least once a quarter. `aeo-seo-weekly` flags when one is due.
+**Tell the user to re-run this report in a week**, every time it runs: at the end of the audit, after shipping fixes, and after each follow-up. Give the date. Keep the weekly re-runs going until every critical and important finding is fixed and the grades hold for two runs in a row. After that, re-run after any big batch of new pages, after a redesign or framework upgrade, and at least once a quarter. `aeo-seo-weekly` flags when one is due.
+
+On the first audit, add a `[baseline]` entry to `aeo-seo-log.md` with Search Console's last 28 days, so every re-run has something to compare against.
 
 When `research/audits/` holds an earlier report:
 1. Read it and its evidence folder first.
@@ -142,7 +171,9 @@ When `research/audits/` holds an earlier report:
 Before showing the report:
 - Every check in `references/checks.md` has a result, and every n/a has a reason.
 - Every finding has evidence from the live site, not only from the repo.
-- Every agent-owned finding has a file path and a fix prompt that names it; every user-owned one has exact steps.
+- Every finding has an owner. Agent-owned findings have a file path and a fix prompt that names it; user-owned ones have click-by-click steps and a time estimate.
+- The report and the chat summary keep "what your agent will do" and "what needs you" as separate lists.
+- The next audit date (a week out) is in the report and the summary.
 - No two fix packages share a file.
 - The grades match the formula.
 - The report opens, has no template comments left, and reads in light and dark mode at phone width.
@@ -158,4 +189,4 @@ Before shipping fixes:
 - `aeo-seo-setup`: builds the site profile this skill reads. Run it first.
 - `blog-post`, `comparison-page`, `feature-page`, `use-case-page`: write new pages that inherit these foundations.
 - `topic-plan`: the next step once the foundations are sound.
-- `aeo-seo-weekly`: the weekly routine; it flags when a re-audit is due.
+- `aeo-seo-weekly`: the weekly routine; it runs the one-week re-audit and flags later ones.

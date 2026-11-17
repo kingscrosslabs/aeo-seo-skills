@@ -27,7 +27,7 @@ Built by [Mika Reyes](https://mikareyes.com) ([@its.mikareyes](https://instagram
 │  Site-wide    │              │      Pages      │             │    Off-site     │
 ├───────────────┤              ├─────────────────┤             ├─────────────────┤
 │ setup         │              │ topic-plan      │             │ forum-replies   │
-│ foundations   │              │ blog-post       │             │ link-pitches    │
+│ technical-audit│              │ blog-post       │             │ link-pitches    │
 │ weekly        │              │ comparison-page │             │                 │
 │               │              │ feature-page    │             │                 │
 │               │              │ use-case-page   │             │                 │
@@ -43,7 +43,7 @@ Built by [Mika Reyes](https://mikareyes.com) ([@its.mikareyes](https://instagram
 Skills hand off to each other:
 
 ```
-aeo-seo-setup → aeo-seo-foundations → topic-plan → blog-post / comparison-page / feature-page / use-case-page
+aeo-seo-setup → aeo-seo-technical-audit → topic-plan → blog-post / comparison-page / feature-page / use-case-page
 aeo-seo-weekly → picks this week's queries and the pages to update → the page skills
 ```
 
@@ -53,7 +53,7 @@ aeo-seo-weekly → picks this week's queries and the pages to update → the pag
 
 **Site-wide**
 - 🚧 [`aeo-seo-setup`](skills/aeo-seo-setup/): builds your `aeo-seo/` site profile by reading your repo and live site, interviewing you for the rest, and connecting OpenSEO.
-- 🚧 [`aeo-seo-foundations`](skills/aeo-seo-foundations/): audits the live site against 26 foundation checks, delivers a graded visual HTML report (problem → principle → fix prompt), implements the fixes you pick with parallel subagents, then re-audits to prove they stuck.
+- 🚧 [`aeo-seo-technical-audit`](skills/aeo-seo-technical-audit/): audits the live site against 26 foundation checks, delivers a graded visual HTML report (problem → principle → fix prompt), implements the fixes you pick with parallel subagents, then re-audits to prove they stuck.
 - 🔜 [`aeo-seo-weekly`](skills/aeo-seo-weekly/): a weekly routine that reads Search Console, checks indexing, proposes the week's queries, and lists the pages to update.
 
 **Pages**

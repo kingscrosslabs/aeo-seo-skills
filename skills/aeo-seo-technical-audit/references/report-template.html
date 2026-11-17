@@ -1,19 +1,20 @@
 <!doctype html>
 <!--
-  Foundations audit report template.
-  Copy this file to research/audits/foundations-<YYYY-MM-DD>.html in the site profile and fill it in.
+  Technical audit report template.
+  Copy this file to research/audits/technical-audit-<YYYY-MM-DD>.html in the site profile and fill it in.
   - Replace every {{PLACEHOLDER}}.
   - Repeat the marked blocks (scorecard, finding, row) as many times as needed.
   - The example content is a fictional site (Ledgerly). Delete it all.
   - Delete every comment before showing the report.
   Grades use the grade classes: g-a, g-b, g-c, g-d, g-f.
-  Severities use the badge classes: b-crit, b-imp, b-pol. Owners: o-agent, o-user.
+  Severities use the badge classes: b-crit, b-imp, b-pol.
+  Owners: "Your agent", "You" or "Agent, then you". "You" findings go in the right column of the action plan with click-by-click steps.
 -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Foundations Audit · {{DOMAIN}}</title>
+<title>Technical Audit · {{DOMAIN}}</title>
 <style>
   :root {
     --bg: #fbf8f3; --card: #ffffff; --ink: #1c1917; --muted: #6b6560; --border: #e8e1d7;
@@ -91,17 +92,27 @@
   th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
   th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
   tr:last-child td { border-bottom: 0; }
-  .o-agent, .o-user { font-size: 12px; font-weight: 600; }
-  .o-user { color: var(--accent); }
   .pkg { display: inline-block; font-size: 12px; font-weight: 600; background: var(--accent-soft); color: var(--accent); border-radius: 6px; padding: 1px 6px; }
-  .todo li { margin-bottom: 8px; }
+  .split { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .col { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+  .col.you { border-color: var(--accent); }
+  .col h3 { margin-bottom: 4px; }
+  .package, .todo-item { border-top: 1px solid var(--border); padding: 14px 0 6px; }
+  .package .head, .todo-item .head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 6px; }
+  .todo-item h4 { margin: 0 0 6px; font-size: 16px; }
+  .todo-item ol { margin: 0 0 8px; padding-left: 20px; }
+  .time { font-size: 12px; font-weight: 600; color: var(--muted); }
+  .why { font-size: 14px; color: var(--muted); }
+  .owner { font-weight: 600; }
+  .next { margin-top: 28px; background: var(--accent-soft); border-radius: 12px; padding: 18px 20px; }
+  .next p { margin: 4px 0 0; }
   @media (max-width: 520px) { .score.overall { flex-direction: column; align-items: flex-start; } }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <div class="eyebrow">AEO/SEO foundations audit · {{MODE: Audit | Follow-up audit}}</div>
+  <div class="eyebrow">AEO/SEO technical audit · {{MODE: Audit | Follow-up audit}}</div>
   <h1>{{DOMAIN}}</h1>
   <p class="sub">{{DATE}} · {{N}} pages swept from the sitemap · {{M}} sampled in depth · Plan only: nothing in the site was changed by this audit.</p>
 
@@ -129,7 +140,7 @@
       <li><a href="#polish">Polish</a></li>
       <li><a href="#good">What's already good</a></li>
       <li><a href="#rules">Rules for new pages</a></li>
-      <li><a href="#plan">Action plan</a></li>
+      <li><a href="#plan">Action plan: your agent vs. you</a></li>
     </ol>
   </nav>
 
@@ -160,7 +171,7 @@
     <p class="lesson">To a search engine, <code>ledgerly.dev</code> and <code>www.ledgerly.dev</code> are two different sites. When the server says one and the pages say the other, every link takes a detour and ranking credit splits between them. Pick one host and make every page, link and file say it.</p>
     <div class="row-label">Prompt to fix it</div>
     <div class="prompt"><button class="copy" type="button">Copy</button>Make https://www.ledgerly.dev the only host. In src/app/layout.tsx, set metadataBase to it and give every page a self-referencing canonical and an og:url equal to that canonical, with no query string. In vercel.json, change the bare-domain redirect to a permanent 308 in one hop. Then run the build and curl three pages to confirm the canonical, og:url and redirect.</div>
-    <div class="facts"><span>Effort: S</span><span>Owner: agent</span></div>
+    <div class="facts"><span>Effort: S</span><span class="owner">Owner: your agent</span></div>
   </article>
 
   <h2 id="important">3 · Important findings</h2>
@@ -186,23 +197,40 @@
   </ol>
 
   <h2 id="plan">7 · Action plan</h2>
-  <p class="sub">Ordered by severity, then effort. Packages run in parallel unless marked "after". Pick the packages to implement.</p>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>#</th><th>Finding</th><th>Checks</th><th>Severity</th><th>Effort</th><th>Package</th><th>Owner</th></tr></thead>
-      <tbody>
-        <!-- Row: repeat per finding -->
-        <tr><td>1</td><td>One host, canonicals and og:url</td><td>C1 C2 C3</td><td><span class="badge b-crit">Critical</span></td><td>S</td><td><span class="pkg">Head and metadata</span></td><td class="o-agent">Agent</td></tr>
-      </tbody>
-    </table>
+  <p class="sub">Split by who has to act. Your AI coding agent can do the left column in the code; the right column needs your login and a few clicks.</p>
+  <div class="split">
+    <section class="col">
+      <h3>What your AI agent will do</h3>
+      <p class="sub">Ordered by severity, then effort. Packages run in parallel unless marked "after". Pick the packages to implement.</p>
+      <!-- Package block: repeat per fix package -->
+      <div class="package">
+        <div class="head"><span class="pkg">Head and metadata</span><span class="badge b-crit">Critical</span><span class="ids">C1 · C2 · C3</span></div>
+        <p>One host everywhere, a self-referencing canonical and matching og:url on every page.</p>
+        <div class="facts"><span>Effort: S</span><span>Files: <code>src/app/layout.tsx</code>, <code>vercel.json</code></span></div>
+      </div>
+    </section>
+    <section class="col you">
+      <h3>What needs you</h3>
+      <p class="sub">Account tasks an agent can't reach. Each one is a few clicks.</p>
+      <!-- To-do block: repeat per "You" or "Agent, then you" finding -->
+      <div class="todo-item">
+        <div class="head"><span class="badge b-crit">Critical</span><span class="ids">B3</span><span class="time">~5 min</span></div>
+        <h4>Submit the sitemap in Google Search Console</h4>
+        <ol>
+          <li>Open <a href="https://search.google.com/search-console">Search Console</a> and pick the <code>www.ledgerly.dev</code> property.</li>
+          <li>Go to <strong>Indexing → Sitemaps</strong>.</li>
+          <li>Paste <code>sitemap.xml</code> and click <strong>Submit</strong>.</li>
+          <li>Done when the status says <strong>Success</strong> (usually within a day).</li>
+        </ol>
+        <p class="why">Why you: it needs your Google login.</p>
+      </div>
+    </section>
   </div>
 
-  <h3 style="margin-top:28px">Your to-dos</h3>
-  <p class="sub">Account tasks an agent can't do for you.</p>
-  <ol class="todo">
-    <li><strong>Submit the sitemap in Google Search Console</strong> (B3): Sitemaps → enter <code>sitemap.xml</code> → Submit. It should show "Success" within a day.</li>
-    <!-- One per user-owned finding, with exact steps -->
-  </ol>
+  <div class="next">
+    <div class="eyebrow">Next audit</div>
+    <p><strong>Run this report again on {{DATE + 7 DAYS}}.</strong> Search engines need a few days to recrawl, so a week is the first useful check. The follow-up shows before and after grades, what's verified on the live site, and what's still open.</p>
+  </div>
 
 </div>
 <script>

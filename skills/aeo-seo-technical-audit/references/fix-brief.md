@@ -3,7 +3,7 @@
 Fill this in for each subagent. It's the only context the subagent gets, so keep the evidence and file paths concrete. Delete the guidance in angle brackets.
 
 ```markdown
-You're fixing one package of findings from an AEO/SEO foundations audit of <domain>.
+You're fixing one package of findings from an AEO/SEO technical audit of <domain>.
 The repo is at <path>, on the branch <branch>. Work only on that branch.
 
 ## Your package: <package name>

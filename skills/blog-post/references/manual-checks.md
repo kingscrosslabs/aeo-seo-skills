@@ -26,4 +26,4 @@ Run these when the site has no check command. They cover what a check command wo
 - [ ] The year is in the title only for evaluation posts, and it's the right year for today's date (it rolls over on December 1).
 - [ ] The product's name appears near the point of value, not only in the closing section.
 
-If the site would benefit from a real check command, note it for `aeo-seo-foundations`.
+If the site would benefit from a real check command, note it for `aeo-seo-technical-audit`.
