@@ -18,7 +18,8 @@ A skill never hardcodes anything about one site: no domain, brand name, folder p
 ```
 skills/<skill>/
 ├── SKILL.md
-└── references/      # long tables, checklists and examples the SKILL.md points to
+├── references/      # long tables, checklists, templates and examples the SKILL.md points to
+└── scripts/         # optional: small standard-library scripts the skill runs (no installs)
 ```
 
 `aeo-seo-setup` also has `templates/aeo-seo/`: the blank profile files it copies into a project.
