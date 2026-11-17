@@ -1,11 +1,15 @@
 # The foundation checks
 
-26 checks in four themes. Each one has the **principle** (why it matters, in a sentence the user can learn from), **how to test it** on the live site, what counts as a **pass**, and the **severity** used for grading.
+27 checks in four themes. Each one has the **principle** (why it matters, in a sentence the user can learn from), **how to test it** on the live site, what counts as a **pass**, and the **severity** used for grading.
 
 Test on the live site, not the repo: what crawlers see is what counts. Use the repo only to find *where* a problem lives. `scripts/sweep.py` collects most of the page-level evidence in one run.
 
 **Severity:** `critical` (3 points) breaks indexing or splits ranking credit · `important` (2) loses clicks, citations or crawl speed · `polish` (1) helps at the margin.
-**Result:** `pass` (full points) · `partial` (half) · `fail` (zero) · `n/a` (left out of the grade, with the reason).
+**Result:** `pass` (full points) · `partial` (half) · `fail` (zero) · `n/a` (left out of the grade, with the reason) · `unconfirmed` (zero until the user confirms it).
+
+`unconfirmed` is for a check only the user can answer (B3's sitemap status, B4, D3's AI segment) on a run with nobody to ask. Score it as a fail, mark it with its own badge, and put the question in "What needs you". Once the user answers, re-score it.
+
+**One-page sites and non-article pages:** a bar written only for articles (A2's question H2s, A5) is n/a on a site with no articles. Where a check gives a landing-page version (A3, A7), score that instead.
 
 ---
 
@@ -21,12 +25,12 @@ Google and AI answer engines both skim. The job is to make the answer easy to fi
 ### A2. One H1, question-phrased H2s · important
 - **Principle:** Headings are the outline crawlers read. Questions match how people actually search, especially in AI tools.
 - **Test:** Sweep: H1 count per page. Read the H2s on the sample pages.
-- **Pass:** Exactly one H1 on every page; H2s on articles are mostly questions where that reads naturally.
+- **Pass:** Exactly one H1 on every page; H2s on articles are mostly questions where that reads naturally. On a landing page, score only the single H1; the question-H2 part is n/a.
 
 ### A3. FAQs on guides and posts · important
 - **Principle:** People ask AI full questions, and the AI looks for pages that answer that exact question. A list of real questions with direct answers is the easiest thing on a page to quote.
 - **Test:** Sample articles: a visible FAQ section and matching `FAQPage` JSON-LD.
-- **Pass:** Guides and posts carry 2–4 real FAQs, visible on the page, with FAQPage markup that matches the visible text.
+- **Pass:** Guides and posts carry 2–4 real FAQs, visible on the page, with FAQPage markup that matches the visible text. On a one-question-per-page Q&A hub, the follow-up questions on each page count toward the 2–4. On a site with no guides or posts, score the landing page: a visible FAQ section with matching markup passes.
 
 ### A4. Structured data · critical
 - **Principle:** JSON-LD labels tell machines what a page is and who's behind it, so they don't have to guess.
@@ -36,17 +40,17 @@ Google and AI answer engines both skim. The job is to make the answer easy to fi
 ### A5. Visible author byline and updated date · important
 - **Principle:** Google and AI weigh who's behind an answer and how fresh it is. Both have to be visible, not only in the markup.
 - **Test:** Sample articles.
-- **Pass:** A named author linked to a bio, a published date, and an updated date where the page changed.
+- **Pass:** A named author linked to a bio, a published date, and an updated date where the page changed. n/a on a site with no articles: a landing page needs neither.
 
 ### A6. A preview image per page · important
 - **Principle:** The share card is what people see in Slack, LinkedIn and iMessage. One generic image on every page reads as noise; a card with the page's own title gets clicked.
 - **Test:** Sweep: `og:image` per page, and fetch two of them.
-- **Pass:** Each page has its own `og:image` (generated or set), 1200×630, with `og:title` and `og:description` that match the page, plus `twitter:card` `summary_large_image`.
+- **Pass:** Each page has its own `og:image` (generated or set), 1200×630, with `og:title` and `og:description` that match the page, plus `twitter:card` `summary_large_image`. Legal and utility pages (terms, privacy, 404) may share the site's default card.
 
 ### A7. Answer first · important
 - **Principle:** A one- or two-sentence direct answer right under each heading is the part AI tools quote most.
 - **Test:** Read the first sentence under the H1 and under 3 H2s on each sample article.
-- **Pass:** The answer comes first, stands alone, and names the subject outright.
+- **Pass:** The answer comes first, stands alone, and names the subject outright. On a landing page, test the hero: the first line under the H1 says what the product is and who it's for, in plain words.
 
 ### A8. Real alt text · polish
 - **Principle:** Crawlers can't see images. Alt text is how they know what a screenshot or chart shows.
@@ -67,7 +71,7 @@ A new site can wait weeks for a crawler to stumble onto it. Hand the crawlers a 
 ### B1. A sitemap with honest dates · critical
 - **Principle:** The sitemap lists every page for crawlers. Accurate `lastmod` dates make them re-check pages that changed; dates that all say "today" teach them to ignore the field.
 - **Test:** Fetch `/sitemap.xml` (or the one `robots.txt` names).
-- **Pass:** It loads, lists every indexable page on the canonical host, leaves out noindex and redirected URLs, and `lastmod` reflects real edits.
+- **Pass:** It loads, lists every indexable page on the canonical host, leaves out noindex and redirected URLs, and `lastmod` reflects real edits. Partial: everything else holds but `<lastmod>` is missing (the sweep's `missing_lastmod` count).
 
 ### B2. llms.txt · important
 - **Principle:** A plain-text summary of the best pages, written for AI. It's an unofficial convention that not every engine reads yet, but it takes minutes to add.
@@ -76,7 +80,7 @@ A new site can wait weeks for a crawler to stumble onto it. Hand the crawlers a 
 
 ### B3. Google Search Console · critical
 - **Principle:** Submitting the sitemap tells Google to come and look, and Search Console is the only first-party view of what Google indexed.
-- **Test:** OpenSEO `list_search_console_sites` and `get_search_console_performance` (free). Ask the user whether the sitemap is submitted and shows "Success".
+- **Test:** OpenSEO `list_search_console_sites` and `get_search_console_performance` (free). `dig +short TXT <domain>` for a `google-site-verification` record: a record with no property in the connected account means the property is under another account, and the user's step is to get access from the owner. Ask the user whether the sitemap is submitted and shows "Success".
 - **Pass:** The property is verified for the canonical host and connected to OpenSEO, and the sitemap is submitted. This is a user task; the agent can't submit it.
 
 ### B4. Bing Webmaster Tools · important
@@ -86,7 +90,7 @@ A new site can wait weeks for a crawler to stumble onto it. Hand the crawlers a 
 
 ### B5. IndexNow on deploy · important
 - **Principle:** IndexNow tells Bing and other engines the moment a page changes. Google doesn't use it, which is why B3 still matters.
-- **Test:** Look for the key file (`/<key>.txt`) and the ping in the build or deploy code.
+- **Test:** Look for the key file (`/<key>.txt`) and the ping in the build or deploy code. Then check the hook or workflow's run history (`gh run list --workflow <file>`): recent runs succeed, not `skipped`. Gotcha: on Vercel monorepos the deployment environment is named `Production – <project-name>`, so `if: environment == 'Production'` never matches and the job always skips.
 - **Pass:** Changed URLs are pinged automatically on each production deploy, never from local or preview builds.
 
 ### B6. AI crawlers allowed · critical
@@ -101,8 +105,8 @@ A new site can wait weeks for a crawler to stumble onto it. Hand the crawlers a 
 
 ### B8. Internal links · important
 - **Principle:** Crawlers find pages by following links, and links show which pages matter most.
-- **Test:** Sweep: internal links per page, and pages in the sitemap no other page links to (orphans).
-- **Pass:** No orphans; articles link to 2–3 related pages and to the product page they support; nav and footer reach every section.
+- **Test:** Sweep: internal links per page, pages in the sitemap no other page links to (orphans), and dead ends (pages with 2 or fewer internal links out, often a page with no site footer).
+- **Pass:** No orphans and no dead ends; articles link to 2–3 related pages and to the product page they support; nav and footer reach every section.
 
 ### B9. Fast and mobile-friendly · important
 - **Principle:** Google measures load speed and mobile usability (Core Web Vitals). Slow pages rank lower and lose clicks.
@@ -117,7 +121,7 @@ When a site disagrees with itself about its own URLs, Google discounts all of th
 
 ### C1. One host · critical
 - **Principle:** `example.com` and `www.example.com` are two sites to a search engine. When the code says one and the server the other, every link takes a redirect detour and ranking credit splits.
-- **Test:** `curl -sI` both hosts and `http://`. Compare the redirect target with the host used in canonicals, `og:url`, the sitemap and internal links.
+- **Test:** `curl -sI` both hosts and `http://`. Compare the redirect target with the host used in canonicals, `og:url`, the sitemap and internal links. Hosts like Vercel and Netlify always do the http→https hop first, before apex→www; allow it, and test the single-hop bar from the `https://` URLs.
 - **Pass:** One host, every other variant 301/308-redirects to it in a single hop, and every file says the same host.
 
 ### C2. Canonical tags · critical
@@ -132,13 +136,18 @@ When a site disagrees with itself about its own URLs, Google discounts all of th
 
 ### C4. Permanent redirects · important
 - **Principle:** A permanent redirect (301 or 308) carries ranking credit to the new URL. A temporary one (302 or 307) tells Google to keep the old URL.
-- **Test:** The redirect config, and `curl -sI` on moved URLs and the host variants.
-- **Pass:** Every permanent move uses 301/308, with no chains longer than one hop.
+- **Test:** The redirect config, and `curl -sI` on moved URLs and the host variants (from `https://`, as in C1). On a re-audit, follow every URL in the previous sitemap (`sweep.py --previous-sitemap`).
+- **Pass:** Every permanent move uses 301/308, with no chains longer than one hop. A redirect that lands on a 4xx is a fail.
 
 ### C5. Empty pages hidden · important
 - **Principle:** Placeholder and "coming soon" pages make the site look thin. Keep them out of the index until they have real content.
 - **Test:** Sweep: pages under ~150 words of main content; check their `robots` meta.
 - **Pass:** Thin pages are `noindex` and out of the sitemap, or filled in. A soft 404 (a "not found" page that returns 200) is a fail.
+
+### C6. App and sign-in pages kept out · important
+- **Principle:** A sign-in page or app shell on a subdomain (`app.example.com/sign-in`) has nothing to rank, and when it gets indexed it competes with the marketing site for the brand name.
+- **Test:** `sweep.py --extra-host https://app.example.com/sign-in` (and any other app URL the site links to): status, `robots` meta and `X-Robots-Tag`. Also fetch the subdomain's `/robots.txt`.
+- **Pass:** Every app and auth URL is `noindex` (meta or header) or blocked in that host's robots.txt. n/a if the site has no app or sign-in host.
 
 ---
 
@@ -153,7 +162,7 @@ Set the system up once so every future page is born right.
 
 ### D2. Rules baked into the page workflow · important
 - **Principle:** Fixes that live only in a one-off sweep regress. When the page template or check command enforces them, every new page is born with its description, FAQs, structured data and preview image.
-- **Test:** The blog or page template, the check command in `site.md`, and the site profile.
+- **Test:** The blog or page template, the check command in `site.md`, and the site profile. If the site has its own SEO check script, compare its bars with these checks (A1's 110–160 characters, for example); a script that passes what this audit fails is a finding.
 - **Pass:** New pages get A1–A6, C2 and C3 from the template or a check that fails the build, and `site.md` lists the check command.
 
 ### D3. Tracking where visitors come from, AI included · important
@@ -165,7 +174,8 @@ Set the system up once so every future page is born right.
 
 ## Grading
 
-For each theme: `points earned ÷ points possible` (n/a checks left out).
+For each theme: `points earned ÷ points possible` (n/a checks left out; unconfirmed counts as zero).
+- **Points possible** with nothing n/a: A 17 · B 22 · C 14 · D 6 · **59 in all**.
 - **A** ≥ 90% · **B** ≥ 80% · **C** ≥ 70% · **D** ≥ 60% · **F** below. Add `+` or `−` for the top or bottom 3 points of a band.
 - **Overall:** the same formula over all checks.
 

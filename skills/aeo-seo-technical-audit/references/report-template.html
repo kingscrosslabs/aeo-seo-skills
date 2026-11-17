@@ -8,7 +8,11 @@
   - Delete every comment before showing the report.
   Grades use the grade classes: g-a, g-b, g-c, g-d, g-f.
   Severities use the badge classes: b-crit, b-imp, b-pol.
-  Owners: "Your agent", "You" or "Agent, then you". "You" findings go in the right column of the action plan with click-by-click steps.
+  Results use b-partial (partial) and b-neutral (n/a, unconfirmed). Fails need no badge.
+  Owners: "Your agent", "You", "Agent, then you" or "You decide, then your agent".
+  User-owned findings ("You", "Agent, then you", "You decide, then your agent") use the steps variant of the finding block
+  and also go in the right column of the action plan.
+  Scorecards: PASSED counts passes, SCORED counts checks that were scored (n/a left out), POINTS/MAX from checks.md.
 -->
 <html lang="en">
 <head>
@@ -21,6 +25,7 @@
     --accent: #c2410c; --accent-soft: #fdeee4;
     --crit: #b91c1c; --crit-soft: #fdecec; --imp: #b45309; --imp-soft: #fef3e2; --pol: #1d4ed8; --pol-soft: #e8eefc;
     --good: #15803d; --good-soft: #e8f5ec;
+    --neutral: #57534e; --neutral-soft: #efebe6;
     --code-bg: #1f1b18; --code-ink: #f1ebe4;
     --g-a: #15803d; --g-b: #4d7c0f; --g-c: #b45309; --g-d: #c2410c; --g-f: #b91c1c;
   }
@@ -30,6 +35,7 @@
       --accent: #fb923c; --accent-soft: #3a2416;
       --crit: #f87171; --crit-soft: #3b1a1a; --imp: #fbbf24; --imp-soft: #3a2c12; --pol: #93b4ff; --pol-soft: #1b2440;
       --good: #4ade80; --good-soft: #15301f;
+      --neutral: #c4bcb4; --neutral-soft: #2c2824;
       --code-bg: #0e0c0b; --code-ink: #f1ebe4;
       --g-a: #4ade80; --g-b: #a3e635; --g-c: #fbbf24; --g-d: #fb923c; --g-f: #f87171;
     }
@@ -39,6 +45,7 @@
     --accent: #fb923c; --accent-soft: #3a2416;
     --crit: #f87171; --crit-soft: #3b1a1a; --imp: #fbbf24; --imp-soft: #3a2c12; --pol: #93b4ff; --pol-soft: #1b2440;
     --good: #4ade80; --good-soft: #15301f;
+    --neutral: #c4bcb4; --neutral-soft: #2c2824;
     --code-bg: #0e0c0b; --code-ink: #f1ebe4;
     --g-a: #4ade80; --g-b: #a3e635; --g-c: #fbbf24; --g-d: #fb923c; --g-f: #f87171;
   }
@@ -76,6 +83,10 @@
   .badge { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.04em; }
   .b-crit { background: var(--crit-soft); color: var(--crit); } .b-imp { background: var(--imp-soft); color: var(--imp); } .b-pol { background: var(--pol-soft); color: var(--pol); }
   .b-new { background: var(--accent-soft); color: var(--accent); } .b-fixed { background: var(--good-soft); color: var(--good); }
+  .b-partial, .b-neutral { background: var(--neutral-soft); color: var(--neutral); }
+  .b-neutral { border: 1px dashed var(--neutral); }
+  .prereq { background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 12px; padding: 14px 18px; margin: 20px 0; }
+  .prereq p { margin: 4px 0 0; }
   .ids { font: 12px ui-monospace, Menlo, monospace; color: var(--muted); }
   .row-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 14px 0 4px; }
   .lesson { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; }
@@ -100,7 +111,7 @@
   .package, .todo-item { border-top: 1px solid var(--border); padding: 14px 0 6px; }
   .package .head, .todo-item .head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 6px; }
   .todo-item h4 { margin: 0 0 6px; font-size: 16px; }
-  .todo-item ol { margin: 0 0 8px; padding-left: 20px; }
+  .todo-item ol, .finding ol.steps { margin: 0 0 8px; padding-left: 20px; }
   .time { font-size: 12px; font-weight: 600; color: var(--muted); }
   .why { font-size: 14px; color: var(--muted); }
   .owner { font-weight: 600; }
@@ -114,7 +125,13 @@
 
   <div class="eyebrow">AEO/SEO technical audit · {{MODE: Audit | Follow-up audit}}</div>
   <h1>{{DOMAIN}}</h1>
-  <p class="sub">{{DATE}} · {{N}} pages swept from the sitemap · {{M}} sampled in depth · Plan only: nothing in the site was changed by this audit.</p>
+  <p class="sub">{{DATE}} · {{N}} pages from {{SOURCE: the sitemap | a URL list | the homepage and its links}} · {{M}} sampled in depth · Plan only: nothing in the site was changed by this audit.</p>
+
+  <!-- Optional: a prerequisite for the fixes. Delete the block if there's none. -->
+  <div class="prereq">
+    <div class="eyebrow">Before you start</div>
+    <p>{{PREREQUISITE, e.g. "Pull the default branch first: your local copy is behind what's live."}}</p>
+  </div>
 
   <!-- Scorecards: one overall, then one per theme. In a follow-up, add <div class="delta">↑ from C</div> under each grade. -->
   <div class="scores">
@@ -122,13 +139,13 @@
       <div class="grade g-c">C+</div>
       <div>
         <div class="label">Overall</div>
-        <div class="meta">{{SCORE}}% of points · {{PASS}} pass · {{PARTIAL}} partial · {{FAIL}} fail · {{NA}} n/a</div>
+        <div class="meta">{{SCORE}}% of points ({{POINTS}}/{{MAX}}) · {{PASS}} pass · {{PARTIAL}} partial · {{FAIL}} fail · {{UNCONFIRMED}} unconfirmed · {{NA}} n/a</div>
       </div>
     </div>
-    <div class="score"><div class="grade g-b">B</div><div class="label">A · Quotable pages</div><div class="meta">{{N}}/9 pass</div></div>
-    <div class="score"><div class="grade g-c">C</div><div class="label">B · Found faster</div><div class="meta">{{N}}/9 pass</div></div>
-    <div class="score"><div class="grade g-d">D</div><div class="label">C · Consistent signals</div><div class="meta">{{N}}/5 pass</div></div>
-    <div class="score"><div class="grade g-b">B−</div><div class="label">D · Runs itself</div><div class="meta">{{N}}/3 pass</div></div>
+    <div class="score"><div class="grade g-b">B</div><div class="label">A · Quotable pages</div><div class="meta">{{PASSED}}/{{SCORED}} pass · {{POINTS}}/{{MAX}} pts</div></div>
+    <div class="score"><div class="grade g-c">C</div><div class="label">B · Found faster</div><div class="meta">{{PASSED}}/{{SCORED}} pass · {{POINTS}}/{{MAX}} pts</div></div>
+    <div class="score"><div class="grade g-d">D</div><div class="label">C · Consistent signals</div><div class="meta">{{PASSED}}/{{SCORED}} pass · {{POINTS}}/{{MAX}} pts</div></div>
+    <div class="score"><div class="grade g-b">B−</div><div class="label">D · Runs itself</div><div class="meta">{{PASSED}}/{{SCORED}} pass · {{POINTS}}/{{MAX}} pts</div></div>
   </div>
   <p class="sub">Grades are directional, not a benchmark. They show where the biggest wins are, and the follow-up audit uses them to prove the fixes stuck.</p>
 
@@ -141,6 +158,7 @@
       <li><a href="#good">What's already good</a></li>
       <li><a href="#rules">Rules for new pages</a></li>
       <li><a href="#plan">Action plan: your agent vs. you</a></li>
+      <li><a href="#unscored">Not scored this run</a></li>
     </ol>
   </nav>
 
@@ -177,6 +195,33 @@
   <h2 id="important">3 · Important findings</h2>
   <p class="sub">These lose you clicks, citations or crawl speed.</p>
   <!-- Finding blocks -->
+
+  <!-- Steps variant for user-owned findings: same block, but numbered steps replace the prompt.
+       What goes in the .pkg span, by owner:
+         Agent: the fix package name (e.g. "Head and metadata"), and keep the prompt block.
+         You: "You".  Agent, then you: "Agent, then you".  You decide, then your agent: "You decide, then your agent"
+         (its steps are the question, the trade-off each way, and what the agent does on a yes).
+       Add <span class="badge b-partial">Partial</span> after the severity when the check scored partial. -->
+  <article class="finding">
+    <div class="head">
+      <span class="badge b-imp">Important</span>
+      <span class="badge b-partial">Partial</span>
+      <span class="ids">B3</span>
+      <span class="pkg">You</span>
+    </div>
+    <h3>Search Console is verified, but under a different Google account</h3>
+    <div class="row-label">Evidence</div>
+    <p>The DNS has a <code>google-site-verification</code> record, but the connected account has no property for <code>ledgerly.dev</code>.</p>
+    <div class="row-label">The principle</div>
+    <p class="lesson">Search Console is the only first-party view of what Google indexed. If you can't see the property, you can't submit the sitemap or check a fix landed.</p>
+    <div class="row-label">Your steps</div>
+    <ol class="steps">
+      <li>Ask whoever set up the site's DNS which Google account owns the Search Console property.</li>
+      <li>Have them open <strong>Settings → Users and permissions</strong> and add you as an Owner.</li>
+      <li>Done when the property shows up in your Search Console.</li>
+    </ol>
+    <div class="facts"><span>~10 min</span><span class="owner">Owner: you</span></div>
+  </article>
 
   <h2 id="polish">4 · Polish</h2>
   <p class="sub">Small gains. Do them when you're in the files anyway.</p>
@@ -225,6 +270,19 @@
         <p class="why">Why you: it needs your Google login.</p>
       </div>
     </section>
+  </div>
+
+  <h2 id="unscored">8 · Not scored this run</h2>
+  <p class="sub">n/a checks are left out of the grade. Unconfirmed checks count as a fail until you confirm them; the questions are in "What needs you".</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Check</th><th>Result</th><th>Why</th></tr></thead>
+      <tbody>
+        <!-- Row: repeat per n/a or unconfirmed check -->
+        <tr><td><span class="ids">B4</span> Bing Webmaster Tools</td><td><span class="badge b-neutral">Unconfirmed</span></td><td>Only you can see it. Scored as a fail until you confirm.</td></tr>
+        <tr><td><span class="ids">A5</span> Author byline and dates</td><td><span class="badge b-neutral">n/a</span></td><td>No articles on the site yet.</td></tr>
+      </tbody>
+    </table>
   </div>
 
   <div class="next">

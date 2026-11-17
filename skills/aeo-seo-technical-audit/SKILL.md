@@ -1,6 +1,6 @@
 ---
 name: aeo-seo-technical-audit
-description: Runs a technical AEO/SEO audit of the live site against 26 checks for Google and AI answer engines (quotable pages, getting found faster, consistent URLs, and a setup that runs itself), grades each theme, and delivers a visual HTML report that teaches the principle behind every issue and gives a ready-to-run fix prompt. Splits the fixes into what the AI coding agent can do in the code and what needs the user to log in and click (Search Console, Bing Webmaster Tools, analytics, DNS). Implements the agent's fixes in parallel with subagents on a branch, then re-audits the live site a week later to show progress. Use when the user says "technical audit", "AEO audit", "SEO audit", "audit my site", "technical SEO", "set up llms.txt", "schema markup", "make my site readable by AI", "re-audit", or when aeo-seo-setup finds gaps.
+description: Runs a technical AEO/SEO audit of the live site against 27 checks for Google and AI answer engines (quotable pages, getting found faster, consistent URLs, and a setup that runs itself), grades each theme, and delivers a visual HTML report that teaches the principle behind every issue and gives a ready-to-run fix prompt. Splits the fixes into what the AI coding agent can do in the code and what needs the user to log in and click (Search Console, Bing Webmaster Tools, analytics, DNS). Implements the agent's fixes in parallel with subagents on a branch, then re-audits the live site a week later to show progress. Use when the user says "technical audit", "AEO audit", "SEO audit", "audit my site", "technical SEO", "set up llms.txt", "schema markup", "make my site readable by AI", "re-audit", or when aeo-seo-setup finds gaps.
 ---
 
 # AEO/SEO Technical Audit
@@ -15,10 +15,10 @@ Makes the whole site easy to crawl, index, trust and quote, once, so every page 
 - **Bake it in.** A fix that isn't enforced by the template or a check regresses on the next page.
 
 **References in this skill:**
-- `references/checks.md`: the 26 checks, each with its principle, test, pass bar and severity, plus the grading formula.
+- `references/checks.md`: the 27 checks, each with its principle, test, pass bar and severity, plus the grading formula.
 - `references/report-template.html`: the report's HTML and styles. Copy it and fill it in.
 - `references/fix-brief.md`: the brief every implementation subagent gets.
-- `scripts/sweep.py`: crawls the sitemap and collects the page-level evidence (titles, descriptions, canonicals, `og:*`, H1s, JSON-LD types, alt text, word counts, internal links).
+- `scripts/sweep.py`: crawls the sitemap (or a URL list) and collects the page-level evidence (titles, descriptions, canonicals, `og:*`, `twitter:*`, H1s, JSON-LD types, alt text, word counts, internal links, `X-Robots-Tag`, sitemap `lastmod`).
 
 ## Step 1: Load the site profile
 
@@ -28,7 +28,7 @@ Before doing anything, load the site's AEO/SEO profile.
 2. **Read the index.** Open the profile's `README.md` and read the files it lists for every task: at minimum `site.md`, `product.md`, and the Decisions table plus the last two weeks of `aeo-seo-log.md`. Open the other files (banks, competitors, research) only when this task needs them.
 3. **Respect what's settled.** If a decision in the log rules out this work, or the log shows it's already done, stop and say so instead of redoing it. Decisions win over this skill when they conflict.
 4. **Check OpenSEO.** Run `whoami` on the OpenSEO MCP. If it isn't connected, stop and point the user to the OpenSEO setup in this repo's README. Never guess search volumes or rankings.
-5. **No profile?** Stop and offer two choices: run `aeo-seo-setup` (recommended), or point to where the profile lives.
+5. **No profile?** If the user named the site in the request, go ahead without one: take the canonical host from the live site and the stack from the repo. Save evidence and the report to `aeo-seo/research/audits/` in the folder that serves the site; in a monorepo, that's the app's folder (`<app>/aeo-seo/research/audits/`). Say in the report that there was no profile, and recommend `aeo-seo-setup` in the next steps. Otherwise, stop and offer two choices: run `aeo-seo-setup` (recommended), or point to where the profile lives.
 
 Never state a fact about the product that isn't in one of the fact sources `product.md` lists. If the work needs one that isn't there, ask, or leave a clearly marked `[placeholder]`.
 
@@ -48,24 +48,29 @@ Confirm three things in one message:
 No approval needed. Read only; change nothing. Save raw evidence to `research/audits/<YYYY-MM-DD>/` in the profile so the re-audit can diff against it.
 
 1. **Crawl files and host.** Fetch `/robots.txt`, `/sitemap.xml` (and any sitemap index), `/llms.txt`, `/llms-full.txt`, and the homepage's `.md` mirror if the site has one. Run `curl -sIL` on `http://` and `https://` for the bare and `www` hosts and record each hop and status code.
-2. **Sweep the pages.** Run `python3 scripts/sweep.py <sitemap URL> --out research/audits/<date>/sweep.json` (it caps at 300 URLs by default; pass `--limit` to change it). It fetches the raw HTML the way a non-JS crawler would. If Python isn't available, collect the same fields with `curl` for the sample pages and say the sweep was partial.
+2. **Sweep the pages.** Run `python3 scripts/sweep.py <sitemap URL> --out research/audits/<date>/sweep.json` (it caps at 300 URLs by default; pass `--limit` to change it). It fetches the raw HTML the way a non-JS crawler would. No sitemap? Pass `--urls <file or comma list>`; with a missing sitemap it falls back to the homepage and its links on its own. Add `--extra-host <URL>` for an app or sign-in subdomain (C6), and `--previous-sitemap <file>` on a re-audit to catch old URLs that now land on a 4xx (C4). If Python isn't available, collect the same fields with `curl` for the sample pages and say the sweep was partial.
 3. **Read the sample pages** in full: the raw HTML and the rendered page (open it in the browser). Note headings, the first sentence under each, FAQs, the byline and dates, and anything that only appears after JavaScript.
 4. **AI crawler access.** Fetch the homepage with `-A "GPTBot"` and `-A "ClaudeBot"` and record the status.
 5. **Speed.** Call the PageSpeed Insights API for the homepage and one article, mobile strategy. The keyless API has a shared daily quota; if it returns "Quota exceeded", mark B9 n/a, give the user the pagespeed.web.dev link for the page, and run it in next week's audit.
 6. **Search data (free calls only).** `get_search_console_performance` for the last 28 days: dimension `date` (sum the rows for the totals), dimension `page` with a small `rowLimit` for the top pages. Skip the `query` dimension here; it returns hundreds of rows the audit doesn't need. Run `inspect_urls` on the sample pages for indexing status and Google's chosen canonical. A breadcrumb rich result listed as "Unnamed item" is normal, not a bug. Don't run paid OpenSEO calls in this skill; if a paid site audit would help, say what it costs and ask first.
-7. **The repo, to locate problems.** For each failing check, find the file that causes it: the layout or head component, the metadata helpers, the sitemap and robots generators, the redirect config, the content folder. Record the path; the report and the fix packages need it.
-8. **Ask the user** what you can't see: Search Console sitemap status, Bing Webmaster Tools, and how analytics shows AI referrers.
+7. **Is the local repo current?** Before reading code, compare the commit that's live with local `HEAD`: the latest production deployment's SHA (`gh api repos/<owner>/<repo>/deployments`, or the host's dashboard or CLI), or else the production branch on the remote (`git fetch`, then `git rev-parse origin/<branch>`). If local is behind, read production's source read-only (`git show origin/<branch>:<path>`, or `gh api` for the file) and don't touch the working tree. Put "pull the default branch first" in the report's **Before you start** note.
+8. **The repo, to locate problems.** For each failing check, find the file that causes it: the layout or head component, the metadata helpers, the sitemap and robots generators, the redirect config, the content folder. Record the path; the report and the fix packages need it.
+   If the site has its own SEO check script, compare its bars with `references/checks.md` (description length, title length, required tags). A mismatch is a finding under D2: the script passes pages the audit fails.
+9. **Search Console ownership.** Run `dig +short TXT <domain>` and look for `google-site-verification`. If a record exists but the connected account has no property for the site, the property most likely lives under another Google account. The user's B3 steps then become "get access from the owner" (Search Console → Settings → Users and permissions), not "verify the site".
+10. **Ask the user** what you can't see: Search Console sitemap status, Bing Webmaster Tools, and how analytics shows AI referrers. On a plan-only or subagent run with nobody to ask, mark those checks `unconfirmed` (see Step 4) and move on.
 
 ## Step 4: Grade and write the findings
 
-Score every check in `references/checks.md` as pass, partial, fail or n/a, then compute the theme grades and the overall grade with its formula.
+Score every check in `references/checks.md` as pass, partial, fail, n/a or unconfirmed, then compute the theme grades and the overall grade with its formula.
 
-Write one finding per failed or partial check. Merge checks that share a cause (one broken layout file can fail C2, C3 and A6) into one finding that lists all their IDs. Each finding has:
+**Unconfirmed** is for a check only the user can confirm (Bing Webmaster Tools, analytics segments, a sitemap's status in Search Console) when nobody was there to ask. It scores as a fail until the user confirms it. Show it with its own badge, list it under "Not scored this run" with the reason, and put the question in "What needs you".
+
+Write one finding per failed or partial check (unconfirmed checks go in "What needs you" instead). Merge checks that share a cause (one broken layout file can fail C2, C3 and A6) into one finding that lists all their IDs. Each finding has:
 - **Title:** the problem in plain words, with a number where there is one ("About 250 pages use their title as the meta description").
 - **Severity** from the check, and the **theme**.
 - **Evidence:** the live URLs or sweep counts that prove it, and the file in the repo where it lives.
 - **Principle:** why it matters, in two or three sentences someone new to SEO would understand. Teach the idea, so the user can spot the next one alone.
-- **Fix prompt:** a copy-paste prompt that would fix it in this repo. It names the files, says what done looks like, and says how to verify on the live site.
+- **Fix prompt:** a copy-paste prompt that would fix it in this repo. It names the files, says what done looks like, and says how to verify on the live site. A user-owned finding gets numbered steps instead.
 - **Effort:** S (under an hour), M (half a day) or L (more).
 - **Owner:** who has to act. See [Who does what](#who-does-what).
 
@@ -78,8 +83,9 @@ Every finding gets one owner, and the report and the chat summary always keep th
 | **Agent** | The AI coding agent can do it alone in the repo: code, templates, config, content files. The user only reviews and approves. | Canonicals, `og:*`, meta descriptions, JSON-LD, sitemap, robots.txt, llms.txt, IndexNow, redirects in config, alt text, headings, FAQs, noindex on thin pages, analytics snippet |
 | **You** | Needs the user's login and clicks in a dashboard the agent can't reach, or a decision only they can make. | Submit the sitemap in Google Search Console, verify the site and import it in Bing Webmaster Tools, add a DNS verification record, turn off bot blocking in the host's firewall or CDN, set up an AI-referrer segment in analytics, approve which pages to noindex |
 | **Agent, then you** | The agent prepares everything (the exact value, the file, the steps), then the user does the final click. | A DNS TXT record the agent wrote out, a redirect only the hosting dashboard can set, a Search Console URL inspection after deploy |
+| **You decide, then your agent** | A product choice the site made on purpose, which the audit questions. The user decides; if they want the change, the agent makes it. | Analytics removed on purpose, AI training bots blocked, a page type kept out of the index |
 
-Write every "You" and "Agent, then you" item as numbered click-by-click steps: where to go, what to click, what to paste, and what they should see when it worked. If the agent can't do something, say why in one line ("this needs your Google login").
+Write every "You" and "Agent, then you" item as numbered click-by-click steps: where to go, what to click, what to paste, and what they should see when it worked. If the agent can't do something, say why in one line ("this needs your Google login"). Write a "You decide, then your agent" item as the question, the trade-off in one line each way, and what the agent will do on a yes.
 
 Then write two more sections:
 - **What's already good:** the passes worth keeping, in one line each, so the user knows what not to break.
@@ -87,19 +93,20 @@ Then write two more sections:
 
 ## Step 5: Build the report (approval gate)
 
-1. Copy `references/report-template.html` to `research/audits/technical-audit-<YYYY-MM-DD>.html` in the profile and fill it in, following the comments in the template: the header, the scorecards, the mental model, the findings grouped by severity, what's good, the rules for new pages, and the action plan.
+1. Copy `references/report-template.html` to `research/audits/technical-audit-<YYYY-MM-DD>.html` in the profile and fill it in, following the comments in the template: the header, the optional "Before you start" note, the scorecards, the mental model, the findings grouped by severity, what's good, the rules for new pages, the action plan, and "Not scored this run" (every n/a and unconfirmed check, with the reason).
 2. **Action plan, in two columns:**
    - **What your AI agent will do:** every agent-owned finding, ordered by severity then effort, grouped into **fix packages** (see Step 6).
-   - **What needs you:** every "You" and "Agent, then you" finding, with the click-by-click steps and roughly how long each takes.
+   - **What needs you:** every "You", "Agent, then you" and "You decide, then your agent" finding, plus every unconfirmed check, with the click-by-click steps and roughly how long each takes.
+   - **Before you start** (only if there is one): a prerequisite for the fixes, such as "pull the default branch first: the local repo is behind production".
 3. **Next audit date:** a week from today, at the bottom of the report.
-4. Remove every template comment and example, and check the page renders in light and dark mode at phone width.
+4. Remove every template comment and example, and check the page renders in light and dark mode at phone width. If the browser refuses `file://` and `localhost`, copy the report into the project folder and open it there, or serve it with `python3 -m http.server` from the project. If both are blocked, check the HTML instead (no `{{` placeholders left, tags balanced) and say in the summary that the visual check wasn't done.
 5. Open the report in the browser for the user, then summarize in chat in this order:
    - the overall and theme grades, and the 3–5 findings that matter most
    - **I can do these for you:** the fix packages, one line each
    - **These need you:** the user's items, one line each with the time it takes, pointing to the steps in the report
 6. **Ask which packages to implement.** Recommend the critical ones first. In audit-only mode, stop here.
 
-Log it in `aeo-seo-log.md` under today's date: `- [research] Technical audit: overall <grade> (A <g>, B <g>, C <g>, D <g>). Report: research/audits/technical-audit-<date>.html.`
+Log it in `aeo-seo-log.md` under today's date: `- [research] Technical audit: overall <grade> (A <g>, B <g>, C <g>, D <g>). Report: research/audits/technical-audit-<date>.html.` With no profile there's no log: skip the entry and say so in the report.
 
 ## Step 6: Implement
 
@@ -109,7 +116,7 @@ Two tracks run side by side: the agent's packages through subagents, and the use
 
 **The agent's track.** Only the packages the user approved.
 
-1. **Branch.** Create one branch for the batch from the default branch, as `site.md` → Shipping describes (`aeo-seo-technical-audit-<date>` unless the site has a naming rule). Never work on the default branch.
+1. **Branch.** Pull the default branch first (`git pull` on it), then create one branch for the batch from it, as `site.md` → Shipping describes (`aeo-seo-technical-audit-<date>` unless the site has a naming rule). Never work on the default branch.
 2. **Plan the packages so no two touch the same file.** A package is one or more findings that share files. The usual split:
 
    | Package | Typical findings | Typical files |
@@ -117,11 +124,11 @@ Two tracks run side by side: the agent's packages through subagents, and the use
    | Head and metadata | C2, C3, A1 template, A6, A4 site-wide | The layout or head component, the metadata helper |
    | Structured data | A4 per page type, A3 markup, A5 | The JSON-LD helpers, the article template |
    | Crawl files | B1, B2, B5, B6 | The sitemap, robots, llms.txt and IndexNow generators, the build config |
-   | Host and redirects | C1, C4 | The redirect config, the hosting config, hardcoded hosts |
+   | Host and redirects | C1, C4, C6 | The redirect config, the hosting config, hardcoded hosts, the app's robots or headers |
    | Content sweep | A1 backfill, A2, A7, A8, C5 | The content folder; split by folder if it's large |
    | Measurement | D3 | Analytics setup, the signup form |
 
-   Two findings that need the same file go in the same package, or run one after the other. Say which packages run in parallel and which wait.
+   Packages never share a file. If two would touch the same one (often the root layout), merge them into one package, or order them so the second starts after the first, and say so in the table. Say which packages run in parallel and which wait.
 3. **Dispatch.** Start one subagent per package with the agent's subagent tool, all parallel packages in one message. Give each the brief from `references/fix-brief.md`, filled in: its findings with their evidence and fix prompts, the files it may change, the files it must not change, the site's check and build commands, and what done looks like. Subagents don't commit, push or deploy. If the agent has no subagent tool, run the packages one at a time yourself, in the same order.
 4. **Coordinate.** Answer each subagent's questions or pass them to the user. If one needs a file another package owns, hold it until that package finishes, then hand it the updated file.
 5. **Integrate.** When every package reports back, review each diff against its brief. Run the site's check and build commands on the whole branch, start the dev server, and check the affected pages' HTML locally (canonicals, `og:*`, JSON-LD parses, the sitemap and llms.txt render).
@@ -159,7 +166,7 @@ Then close the loop:
 
 **Tell the user to re-run this report in a week**, every time it runs: at the end of the audit, after shipping fixes, and after each follow-up. Give the date. Keep the weekly re-runs going until every critical and important finding is fixed and the grades hold for two runs in a row. After that, re-run after any big batch of new pages, after a redesign or framework upgrade, and at least once a quarter. `aeo-seo-weekly` flags when one is due.
 
-On the first audit, add a `[baseline]` entry to `aeo-seo-log.md` with Search Console's last 28 days, so every re-run has something to compare against.
+On the first audit, add a `[baseline]` entry to `aeo-seo-log.md` with Search Console's last 28 days, so every re-run has something to compare against. With no profile or no Search Console data, write "no baseline yet" in the report and take the baseline on the first run that has the data.
 
 When `research/audits/` holds an earlier report:
 1. Read it and its evidence folder first.
@@ -169,7 +176,7 @@ When `research/audits/` holds an earlier report:
 ## Quality check
 
 Before showing the report:
-- Every check in `references/checks.md` has a result, and every n/a has a reason.
+- Every check in `references/checks.md` has a result, and every n/a and unconfirmed has a reason under "Not scored this run".
 - Every finding has evidence from the live site, not only from the repo.
 - Every finding has an owner. Agent-owned findings have a file path and a fix prompt that names it; user-owned ones have click-by-click steps and a time estimate.
 - The report and the chat summary keep "what your agent will do" and "what needs you" as separate lists.
