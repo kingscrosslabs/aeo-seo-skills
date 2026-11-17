@@ -1,0 +1,308 @@
+<!doctype html>
+<!--
+  Technical audit report template.
+  Copy this file to research/audits/technical-audit-<YYYY-MM-DD>.html in the site profile and fill it in.
+  - Replace every {{PLACEHOLDER}}.
+  - Repeat the marked blocks (scorecard, finding, row) as many times as needed.
+  - The example content is a fictional site (Ledgerly). Delete it all.
+  - Delete every comment before showing the report.
+  Grades use the grade classes: g-a, g-b, g-c, g-d, g-f.
+  Severities use the badge classes: b-crit, b-imp, b-pol.
+  Results use b-partial (partial) and b-neutral (n/a, unconfirmed). Fails need no badge.
+  Owners: "Your agent", "You", "Agent, then you" or "You decide, then your agent".
+  User-owned findings ("You", "Agent, then you", "You decide, then your agent") use the steps variant of the finding block
+  and also go in the right column of the action plan.
+  Scorecards: PASSED counts passes, SCORED counts checks that were scored (n/a left out), POINTS/MAX from checks.md.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Technical Audit · {{DOMAIN}}</title>
+<style>
+  :root {
+    --bg: #fbf8f3; --card: #ffffff; --ink: #1c1917; --muted: #6b6560; --border: #e8e1d7;
+    --accent: #c2410c; --accent-soft: #fdeee4;
+    --crit: #b91c1c; --crit-soft: #fdecec; --imp: #b45309; --imp-soft: #fef3e2; --pol: #1d4ed8; --pol-soft: #e8eefc;
+    --good: #15803d; --good-soft: #e8f5ec;
+    --neutral: #57534e; --neutral-soft: #efebe6;
+    --code-bg: #1f1b18; --code-ink: #f1ebe4;
+    --g-a: #15803d; --g-b: #4d7c0f; --g-c: #b45309; --g-d: #c2410c; --g-f: #b91c1c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #151311; --card: #1e1b18; --ink: #f1ece6; --muted: #a8a09a; --border: #34302b;
+      --accent: #fb923c; --accent-soft: #3a2416;
+      --crit: #f87171; --crit-soft: #3b1a1a; --imp: #fbbf24; --imp-soft: #3a2c12; --pol: #93b4ff; --pol-soft: #1b2440;
+      --good: #4ade80; --good-soft: #15301f;
+      --neutral: #c4bcb4; --neutral-soft: #2c2824;
+      --code-bg: #0e0c0b; --code-ink: #f1ebe4;
+      --g-a: #4ade80; --g-b: #a3e635; --g-c: #fbbf24; --g-d: #fb923c; --g-f: #f87171;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #151311; --card: #1e1b18; --ink: #f1ece6; --muted: #a8a09a; --border: #34302b;
+    --accent: #fb923c; --accent-soft: #3a2416;
+    --crit: #f87171; --crit-soft: #3b1a1a; --imp: #fbbf24; --imp-soft: #3a2c12; --pol: #93b4ff; --pol-soft: #1b2440;
+    --good: #4ade80; --good-soft: #15301f;
+    --neutral: #c4bcb4; --neutral-soft: #2c2824;
+    --code-bg: #0e0c0b; --code-ink: #f1ebe4;
+    --g-a: #4ade80; --g-b: #a3e635; --g-c: #fbbf24; --g-d: #fb923c; --g-f: #f87171;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 48px 16px 96px; }
+  h1, h2, h3 { line-height: 1.2; letter-spacing: -0.01em; }
+  h1 { font-size: clamp(30px, 5vw, 44px); margin: 6px 0 8px; }
+  h2 { font-size: 26px; margin: 56px 0 12px; padding-top: 8px; border-top: 1px solid var(--border); }
+  h3 { font-size: 19px; margin: 0 0 8px; }
+  p { margin: 0 0 12px; }
+  a { color: var(--accent); }
+  code { font: 0.9em ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--accent-soft); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+  .eyebrow { text-transform: uppercase; letter-spacing: 0.08em; font-size: 12px; color: var(--muted); font-weight: 600; }
+  .sub { color: var(--muted); }
+
+  .scores { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 28px 0; }
+  .score { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  .score.overall { grid-column: 1 / -1; display: flex; align-items: center; gap: 20px; }
+  .score .grade { font-size: 40px; font-weight: 800; line-height: 1; }
+  .score.overall .grade { font-size: 64px; }
+  .score .label { font-weight: 600; margin-top: 6px; }
+  .score .meta { color: var(--muted); font-size: 14px; }
+  .delta { font-size: 14px; color: var(--good); font-weight: 600; }
+  .g-a { color: var(--g-a); } .g-b { color: var(--g-b); } .g-c { color: var(--g-c); } .g-d { color: var(--g-d); } .g-f { color: var(--g-f); }
+
+  .toc { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; }
+  .toc ol { margin: 0; padding-left: 20px; }
+
+  .model { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .model div { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+
+  .finding { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin: 16px 0; }
+  .finding .head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+  .badge { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .b-crit { background: var(--crit-soft); color: var(--crit); } .b-imp { background: var(--imp-soft); color: var(--imp); } .b-pol { background: var(--pol-soft); color: var(--pol); }
+  .b-new { background: var(--accent-soft); color: var(--accent); } .b-fixed { background: var(--good-soft); color: var(--good); }
+  .b-partial, .b-neutral { background: var(--neutral-soft); color: var(--neutral); }
+  .b-neutral { border: 1px dashed var(--neutral); }
+  .prereq { background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 12px; padding: 14px 18px; margin: 20px 0; }
+  .prereq p { margin: 4px 0 0; }
+  .ids { font: 12px ui-monospace, Menlo, monospace; color: var(--muted); }
+  .row-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 14px 0 4px; }
+  .lesson { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; }
+  .prompt { position: relative; background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 14px 16px; font: 13.5px/1.55 ui-monospace, Menlo, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .copy { position: absolute; top: 8px; right: 8px; font: 12px system-ui, sans-serif; background: transparent; color: var(--code-ink); border: 1px solid #5a524b; border-radius: 6px; padding: 3px 8px; cursor: pointer; }
+  .facts { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 14px; color: var(--muted); margin-top: 12px; }
+
+  ul.good { list-style: none; padding: 0; }
+  ul.good li { padding: 6px 0 6px 26px; position: relative; border-bottom: 1px solid var(--border); }
+  ul.good li::before { content: "✓"; position: absolute; left: 4px; color: var(--good); font-weight: 700; }
+
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; background: var(--card); }
+  table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+  tr:last-child td { border-bottom: 0; }
+  .pkg { display: inline-block; font-size: 12px; font-weight: 600; background: var(--accent-soft); color: var(--accent); border-radius: 6px; padding: 1px 6px; }
+  .split { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .col { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+  .col.you { border-color: var(--accent); }
+  .col h3 { margin-bottom: 4px; }
+  .package, .todo-item { border-top: 1px solid var(--border); padding: 14px 0 6px; }
+  .package .head, .todo-item .head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 6px; }
+  .todo-item h4 { margin: 0 0 6px; font-size: 16px; }
+  .todo-item ol, .finding ol.steps { margin: 0 0 8px; padding-left: 20px; }
+  .time { font-size: 12px; font-weight: 600; color: var(--muted); }
+  .why { font-size: 14px; color: var(--muted); }
+  .owner { font-weight: 600; }
+  .next { margin-top: 28px; background: var(--accent-soft); border-radius: 12px; padding: 18px 20px; }
+  .next p { margin: 4px 0 0; }
+  @media (max-width: 520px) { .score.overall { flex-direction: column; align-items: flex-start; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">AEO/SEO technical audit · {{MODE: Audit | Follow-up audit}}</div>
+  <h1>{{DOMAIN}}</h1>
+  <p class="sub">{{DATE}} · {{N}} pages from {{SOURCE: the sitemap | a URL list | the homepage and its links}} · {{M}} sampled in depth · Plan only: nothing in the site was changed by this audit.</p>
+
+  <!-- Optional: a prerequisite for the fixes. Delete the block if there's none. -->
+  <div class="prereq">
+    <div class="eyebrow">Before you start</div>
+    <p>{{PREREQUISITE, e.g. "Pull the default branch first: your local copy is behind what's live."}}</p>
+  </div>
+
+  <!-- Scorecards: one overall, then one per theme. In a follow-up, add <div class="delta">↑ from C</div> under each grade. -->
+  <div class="scores">
+    <div class="score overall">
+      <div class="grade g-c">C+</div>
+      <div>
+        <div class="label">Overall</div>
+        <div class="meta">{{SCORE}}% of points ({{POINTS}}/{{MAX}}) · {{PASS}} pass · {{PARTIAL}} partial · {{FAIL}} fail · {{UNCONFIRMED}} unconfirmed · {{NA}} n/a</div>
+      </div>
+    </div>
+    <div class="score"><div class="grade g-b">B</div><div class="label">A · Quotable pages</div><div class="meta">{{PASSED}}/{{SCORED}} pass · {{POINTS}}/{{MAX}} pts</div></div>
+    <div class="score"><div class="grade g-c">C</div><div class="label">B · Found faster</div><div class="meta">{{PASSED}}/{{SCORED}} pass · {{POINTS}}/{{MAX}} pts</div></div>
+    <div class="score"><div class="grade g-d">D</div><div class="label">C · Consistent signals</div><div class="meta">{{PASSED}}/{{SCORED}} pass · {{POINTS}}/{{MAX}} pts</div></div>
+    <div class="score"><div class="grade g-b">B−</div><div class="label">D · Runs itself</div><div class="meta">{{PASSED}}/{{SCORED}} pass · {{POINTS}}/{{MAX}} pts</div></div>
+  </div>
+  <p class="sub">Grades are directional, not a benchmark. They show where the biggest wins are, and the follow-up audit uses them to prove the fixes stuck.</p>
+
+  <nav class="toc">
+    <ol>
+      <li><a href="#model">How search and AI search find you</a></li>
+      <li><a href="#critical">Critical findings</a></li>
+      <li><a href="#important">Important findings</a></li>
+      <li><a href="#polish">Polish</a></li>
+      <li><a href="#good">What's already good</a></li>
+      <li><a href="#rules">Rules for new pages</a></li>
+      <li><a href="#plan">Action plan: your agent vs. you</a></li>
+      <li><a href="#unscored">Not scored this run</a></li>
+    </ol>
+  </nav>
+
+  <h2 id="model">1 · How search and AI search find you</h2>
+  <div class="model">
+    <div><h3>Google</h3><p>Crawlers read your pages, add the ones they trust to the index, then rank them for each search. Where you land depends on whether the page answers the search, and how much Google trusts the domain.</p></div>
+    <div><h3>AI answer engines</h3><p>ChatGPT, Claude and Perplexity run their own searches on engines like Google and Bing, read the top results, and cite a few pages. If search engines can't find you, the AI can't either.</p></div>
+    <div><h3>What this audit checks</h3><p>That your pages are quotable (A), found fast (B), never contradict each other (C), and that the setup keeps itself right on every new page (D).</p></div>
+  </div>
+
+  <h2 id="critical">2 · Critical findings</h2>
+  <p class="sub">These break indexing or split your ranking credit. Fix them first.</p>
+
+  <!-- Finding block: repeat per finding. Put it under critical, important or polish by its severity. -->
+  <article class="finding">
+    <div class="head">
+      <span class="badge b-crit">Critical</span>
+      <span class="ids">C1 · C2 · C3</span>
+      <span class="pkg">Head and metadata</span>
+      <!-- Follow-up only: <span class="badge b-new">New</span> or <span class="badge b-new">Still open</span> or <span class="badge b-new">Regressed</span> -->
+    </div>
+    <h3>The site lives at two addresses, and the pages disagree about which is real</h3>
+    <div class="row-label">Evidence</div>
+    <p><code>ledgerly.dev</code> redirects to <code>www.ledgerly.dev</code> with a 307, but every canonical and <code>og:url</code> points at <code>ledgerly.dev</code>. The sweep found 84 of 84 pages with a canonical on the wrong host, and <code>og:url</code> set to the homepage on all of them.</p>
+    <div class="row-label">Where it lives</div>
+    <p><code>src/app/layout.tsx</code> (hardcoded <code>metadataBase</code>), <code>vercel.json</code> (redirect)</p>
+    <div class="row-label">The principle</div>
+    <p class="lesson">To a search engine, <code>ledgerly.dev</code> and <code>www.ledgerly.dev</code> are two different sites. When the server says one and the pages say the other, every link takes a detour and ranking credit splits between them. Pick one host and make every page, link and file say it.</p>
+    <div class="row-label">Prompt to fix it</div>
+    <div class="prompt"><button class="copy" type="button">Copy</button>Make https://www.ledgerly.dev the only host. In src/app/layout.tsx, set metadataBase to it and give every page a self-referencing canonical and an og:url equal to that canonical, with no query string. In vercel.json, change the bare-domain redirect to a permanent 308 in one hop. Then run the build and curl three pages to confirm the canonical, og:url and redirect.</div>
+    <div class="facts"><span>Effort: S</span><span class="owner">Owner: your agent</span></div>
+  </article>
+
+  <h2 id="important">3 · Important findings</h2>
+  <p class="sub">These lose you clicks, citations or crawl speed.</p>
+  <!-- Finding blocks -->
+
+  <!-- Steps variant for user-owned findings: same block, but numbered steps replace the prompt.
+       What goes in the .pkg span, by owner:
+         Agent: the fix package name (e.g. "Head and metadata"), and keep the prompt block.
+         You: "You".  Agent, then you: "Agent, then you".  You decide, then your agent: "You decide, then your agent"
+         (its steps are the question, the trade-off each way, and what the agent does on a yes).
+       Add <span class="badge b-partial">Partial</span> after the severity when the check scored partial. -->
+  <article class="finding">
+    <div class="head">
+      <span class="badge b-imp">Important</span>
+      <span class="badge b-partial">Partial</span>
+      <span class="ids">B3</span>
+      <span class="pkg">You</span>
+    </div>
+    <h3>Search Console is verified, but under a different Google account</h3>
+    <div class="row-label">Evidence</div>
+    <p>The DNS has a <code>google-site-verification</code> record, but the connected account has no property for <code>ledgerly.dev</code>.</p>
+    <div class="row-label">The principle</div>
+    <p class="lesson">Search Console is the only first-party view of what Google indexed. If you can't see the property, you can't submit the sitemap or check a fix landed.</p>
+    <div class="row-label">Your steps</div>
+    <ol class="steps">
+      <li>Ask whoever set up the site's DNS which Google account owns the Search Console property.</li>
+      <li>Have them open <strong>Settings → Users and permissions</strong> and add you as an Owner.</li>
+      <li>Done when the property shows up in your Search Console.</li>
+    </ol>
+    <div class="facts"><span>~10 min</span><span class="owner">Owner: you</span></div>
+  </article>
+
+  <h2 id="polish">4 · Polish</h2>
+  <p class="sub">Small gains. Do them when you're in the files anyway.</p>
+  <!-- Finding blocks -->
+
+  <h2 id="good">5 · What's already good</h2>
+  <p class="sub">Keep these working when you change things.</p>
+  <ul class="good">
+    <li><strong>llms.txt</strong> loads and lists the docs and every guide, generated from the content folder.</li>
+    <!-- One line per pass worth keeping -->
+  </ul>
+
+  <h2 id="rules">6 · Rules for new pages</h2>
+  <p class="sub">The page-level rules this site keeps missing. Bake them into the page template or the check command (finding D2) so every new page is born with them.</p>
+  <ol>
+    <li><strong>A real description.</strong> 110–160 characters, not the title.</li>
+    <!-- One rule per line, each tied to the check it prevents -->
+  </ol>
+
+  <h2 id="plan">7 · Action plan</h2>
+  <p class="sub">Split by who has to act. Your AI coding agent can do the left column in the code; the right column needs your login and a few clicks.</p>
+  <div class="split">
+    <section class="col">
+      <h3>What your AI agent will do</h3>
+      <p class="sub">Ordered by severity, then effort. Packages run in parallel unless marked "after". Pick the packages to implement.</p>
+      <!-- Package block: repeat per fix package -->
+      <div class="package">
+        <div class="head"><span class="pkg">Head and metadata</span><span class="badge b-crit">Critical</span><span class="ids">C1 · C2 · C3</span></div>
+        <p>One host everywhere, a self-referencing canonical and matching og:url on every page.</p>
+        <div class="facts"><span>Effort: S</span><span>Files: <code>src/app/layout.tsx</code>, <code>vercel.json</code></span></div>
+      </div>
+    </section>
+    <section class="col you">
+      <h3>What needs you</h3>
+      <p class="sub">Account tasks an agent can't reach. Each one is a few clicks.</p>
+      <!-- To-do block: repeat per "You" or "Agent, then you" finding -->
+      <div class="todo-item">
+        <div class="head"><span class="badge b-crit">Critical</span><span class="ids">B3</span><span class="time">~5 min</span></div>
+        <h4>Submit the sitemap in Google Search Console</h4>
+        <ol>
+          <li>Open <a href="https://search.google.com/search-console">Search Console</a> and pick the <code>www.ledgerly.dev</code> property.</li>
+          <li>Go to <strong>Indexing → Sitemaps</strong>.</li>
+          <li>Paste <code>sitemap.xml</code> and click <strong>Submit</strong>.</li>
+          <li>Done when the status says <strong>Success</strong> (usually within a day).</li>
+        </ol>
+        <p class="why">Why you: it needs your Google login.</p>
+      </div>
+    </section>
+  </div>
+
+  <h2 id="unscored">8 · Not scored this run</h2>
+  <p class="sub">n/a checks are left out of the grade. Unconfirmed checks count as a fail until you confirm them; the questions are in "What needs you".</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Check</th><th>Result</th><th>Why</th></tr></thead>
+      <tbody>
+        <!-- Row: repeat per n/a or unconfirmed check -->
+        <tr><td><span class="ids">B4</span> Bing Webmaster Tools</td><td><span class="badge b-neutral">Unconfirmed</span></td><td>Only you can see it. Scored as a fail until you confirm.</td></tr>
+        <tr><td><span class="ids">A5</span> Author byline and dates</td><td><span class="badge b-neutral">n/a</span></td><td>No articles on the site yet.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="next">
+    <div class="eyebrow">Next audit</div>
+    <p><strong>Run this report again on {{DATE + 7 DAYS}}.</strong> Search engines need a few days to recrawl, so a week is the first useful check. The follow-up shows before and after grades, what's verified on the live site, and what's still open.</p>
+  </div>
+
+</div>
+<script>
+  document.querySelectorAll('.prompt .copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var text = btn.parentElement.textContent.replace(/^Copy/, '').trim();
+      try {
+        navigator.clipboard.writeText(text).then(function () {
+          btn.textContent = 'Copied';
+          setTimeout(function () { btn.textContent = 'Copy'; }, 1500);
+        });
+      } catch (e) { btn.textContent = 'Select and copy'; }
+    });
+  });
+</script>
+</body>
+</html>
