@@ -1,13 +1,27 @@
 # The foundation checks
 
-27 checks in four themes. Each one has the **principle** (why it matters, in a sentence the user can learn from), **how to test it** on the live site, what counts as a **pass**, and the **severity** used for grading.
+28 checks in four themes. Each one has the **principle** (why it matters, in a sentence the user can learn from), **how to test it** on the live site, what counts as a **pass**, and the **severity** used for grading.
 
 Test on the live site, not the repo: what crawlers see is what counts. Use the repo only to find *where* a problem lives. `scripts/sweep.py` collects most of the page-level evidence in one run.
 
 **Severity:** `critical` (3 points) breaks indexing or splits ranking credit · `important` (2) loses clicks, citations or crawl speed · `polish` (1) helps at the margin.
 **Result:** `pass` (full points) · `partial` (half) · `fail` (zero) · `n/a` (left out of the grade, with the reason) · `unconfirmed` (zero until the user confirms it).
 
-`unconfirmed` is for a check only the user can answer (B3's sitemap status, B4, D3's AI segment) on a run with nobody to ask. Score it as a fail, mark it with its own badge, and put the question in "What needs you". Once the user answers, re-score it.
+`unconfirmed` is for a check only the user can answer (B3's sitemap status, B4, B10, D3's AI segment) on a run with nobody to ask. Score it as a fail, mark it with its own badge, and put the question in "What needs you". Once the user answers, re-score it.
+
+## New domain setup checklist
+
+Every domain gets these five setup steps once, by hand. Most of them can't be seen from the live site, so a crawl alone won't catch a missing one. The audit captures them anyway: it asks about each item on every run, records the answers in `site.md` → Search data, and lists anything not done under "What needs you".
+
+| # | Step | Owner | Scored by |
+|---|---|---|---|
+| 1 | Verify the site in **Google Search Console** | You | B3 |
+| 2 | Submit the sitemap in **Google Search Console** | You | B3 |
+| 3 | Verify the site in **Bing Webmaster Tools** (import from Search Console works) and submit the sitemap there | You | B4 |
+| 4 | Submit the homepage at **Brave Search** ([search.brave.com/submit-url](https://search.brave.com/submit-url)) | You | B10 |
+| 5 | **IndexNow** pings Bing on every production deploy | Agent | B5 |
+
+A step stays open until the user confirms it (or, for IndexNow, the deploy history proves it). Once `site.md` records a step as done with a date, don't ask again on later runs; re-check only what the live evidence can show (the sitemap still loads, IndexNow runs still succeed).
 
 **One-page sites and non-article pages:** a bar written only for articles (A2's question H2s, A5) is n/a on a site with no articles. Where a check gives a landing-page version (A3, A7), score that instead.
 
@@ -81,17 +95,17 @@ A new site can wait weeks for a crawler to stumble onto it. Hand the crawlers a 
 ### B3. Google Search Console · critical
 - **Principle:** Submitting the sitemap tells Google to come and look, and Search Console is the only first-party view of what Google indexed.
 - **Test:** OpenSEO `list_search_console_sites` and `get_search_console_performance` (free). `dig +short TXT <domain>` for a `google-site-verification` record: a record with no property in the connected account means the property is under another account, and the user's step is to get access from the owner. Ask the user whether the sitemap is submitted and shows "Success".
-- **Pass:** The property is verified for the canonical host and connected to OpenSEO, and the sitemap is submitted. This is a user task; the agent can't submit it.
+- **Pass:** The property is verified for the canonical host and connected to OpenSEO, and the sitemap is submitted and shows "Success". Partial: verified but the sitemap isn't submitted. This is a user task; the agent can't submit it. Setup checklist steps 1–2.
 
 ### B4. Bing Webmaster Tools · important
 - **Principle:** Bing's index feeds ChatGPT search and Microsoft Copilot, so this is an AI search step too.
-- **Test:** Ask the user.
-- **Pass:** The site is verified in Bing Webmaster Tools with the sitemap submitted (importing from Search Console is fine). A user task.
+- **Test:** Ask the user, or read `site.md` → Search data. Look for a `msvalidate.01` meta tag or a `BingSiteAuth.xml` file as a hint that verification was started.
+- **Pass:** The site is verified in Bing Webmaster Tools with the sitemap submitted (importing from Search Console is fine). Partial: verified but no sitemap. A user task. Setup checklist step 3.
 
 ### B5. IndexNow on deploy · important
 - **Principle:** IndexNow tells Bing and other engines the moment a page changes. Google doesn't use it, which is why B3 still matters.
 - **Test:** Look for the key file (`/<key>.txt`) and the ping in the build or deploy code. Then check the hook or workflow's run history (`gh run list --workflow <file>`): recent runs succeed, not `skipped`. Gotcha: on Vercel monorepos the deployment environment is named `Production – <project-name>`, so `if: environment == 'Production'` never matches and the job always skips.
-- **Pass:** Changed URLs are pinged automatically on each production deploy, never from local or preview builds.
+- **Pass:** Changed URLs are pinged to Bing (`https://www.bing.com/indexnow` or `https://api.indexnow.org/indexnow`) automatically on each production deploy, never from local or preview builds. Setup checklist step 5.
 
 ### B6. AI crawlers allowed · critical
 - **Principle:** `robots.txt` tells crawlers what they may read. Blocking AI bots means AI answers can't cite you.
@@ -112,6 +126,11 @@ A new site can wait weeks for a crawler to stumble onto it. Hand the crawlers a 
 - **Principle:** Google measures load speed and mobile usability (Core Web Vitals). Slow pages rank lower and lose clicks.
 - **Test:** PageSpeed Insights API (`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=<url>&strategy=mobile`) for the homepage and one article. Report LCP, CLS, INP and the performance score.
 - **Pass:** LCP under 2.5s, CLS under 0.1, INP under 200ms on mobile. Partial: one metric in "needs improvement".
+
+### B10. Brave Search submission · important
+- **Principle:** Brave runs its own search index, separate from Google and Bing, and AI tools that search the web through the Brave Search API read from it. A new domain can sit outside that index for weeks unless you hand it over.
+- **Test:** Ask the user, or read `site.md` → Search data. Optionally search Brave for `site:<domain>` to see whether pages show up yet.
+- **Pass:** The homepage (and ideally the sitemap URL) was submitted at [search.brave.com/submit-url](https://search.brave.com/submit-url). A user task: the form needs a person. Setup checklist step 4.
 
 ---
 
@@ -175,7 +194,7 @@ Set the system up once so every future page is born right.
 ## Grading
 
 For each theme: `points earned ÷ points possible` (n/a checks left out; unconfirmed counts as zero).
-- **Points possible** with nothing n/a: A 17 · B 22 · C 14 · D 6 · **59 in all**.
+- **Points possible** with nothing n/a: A 17 · B 24 · C 14 · D 6 · **61 in all**.
 - **A** ≥ 90% · **B** ≥ 80% · **C** ≥ 70% · **D** ≥ 60% · **F** below. Add `+` or `−` for the top or bottom 3 points of a band.
 - **Overall:** the same formula over all checks.
 

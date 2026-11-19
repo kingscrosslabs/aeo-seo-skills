@@ -237,6 +237,28 @@ places them. Four rules:
 
 Icons are text glyphs only: `★ → ✦ + $`. No icon library.
 
+## Audit report
+
+`skills/aeo-seo-technical-audit/references/report-template.html` is the second
+surface: the HTML report the audit hands every user. It uses this system as is:
+ink ground, surface cards, 5px corners, flat, Satoshi headings, Hanken body,
+JetBrains Mono for check IDs, file paths and fix prompts. Fix prompts render as
+the terminal (orange `$`, orange pill Copy button with ink text).
+
+It adds one thing the site doesn't need, severity and result badges, built the
+same way as the status badges (a dot plus a text label):
+
+| Badge | Dot |
+|---|---|
+| Critical, New / Still open / Regressed | accent |
+| Important, Partial (ring) | yellow `#FACF5A` |
+| Polish | muted |
+| Fixed, passes, done checklist steps | green `#6FD098` |
+| n/a, Unconfirmed | dashed muted ring |
+
+Grades: A green, B text, C yellow, D and F accent. A change to the site's
+structure here should be mirrored in the report.
+
 ## Do's and Don'ts
 
 **Do**
