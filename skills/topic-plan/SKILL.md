@@ -1,6 +1,6 @@
 ---
 name: topic-plan
-description: Proposes the next cluster of 8–12 pages for the user's site from real search data: what to write, the target query for each, which existing page it supports, and the order to ship them. Pulls Search Console and keyword data from OpenSEO in one batch, checks the query bank and user questions so nothing is planned twice, and records the approved plan as a decision. Use when the user says "what should we write about", "plan topics", "topic cluster", "content plan for SEO", "keyword plan", or "what pages should we build". Not for writing the pages (use blog-post and the other page skills).
+description: 'Proposes the next cluster of 8–12 pages for the user''s site from real search data: what to write, the target query for each, which existing page it supports, and the order to ship them. Pulls Search Console and keyword data from OpenSEO in one batch, checks the query bank and user questions so nothing is planned twice, and records the approved plan as a decision. Use when the user says "what should we write about", "plan topics", "topic cluster", "content plan for SEO", "keyword plan", or "what pages should we build". Not for writing the pages (use blog-post and the other page skills).'
 ---
 
 # Topic Plan

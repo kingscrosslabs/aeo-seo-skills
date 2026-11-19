@@ -1,6 +1,6 @@
 ---
 name: comparison-page
-description: Writes or updates a comparison page on the user's site: "<competitor> alternative" or "<product> vs <competitor>". Researches the queries and AI prompts people use, re-fetches and dates every competitor claim, shows only the dimensions where the user's product is actually stronger, puts where the competitor fits in a "Stay with <X> if you" box, and adds question-form sections, quotable answers, a comparison table, FAQs and schema. Use when the user says "comparison page", "compare page", "<competitor> alternative page", "<X> vs <Y> page", or "refresh the compare pages". Not for listicles comparing several tools (use blog-post).
+description: 'Writes or updates a comparison page on the user''s site: "<competitor> alternative" or "<product> vs <competitor>". Researches the queries and AI prompts people use, re-fetches and dates every competitor claim, shows only the dimensions where the user''s product is actually stronger, puts where the competitor fits in a "Stay with <X> if you" box, and adds question-form sections, quotable answers, a comparison table, FAQs and schema. Use when the user says "comparison page", "compare page", "<competitor> alternative page", "<X> vs <Y> page", or "refresh the compare pages". Not for listicles comparing several tools (use blog-post).'
 ---
 
 # Comparison Page
