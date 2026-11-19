@@ -36,7 +36,6 @@ export const site = {
     headline: "AEO and SEO skills",
     highlight: "for AI agents",
     sub: "Skills that get your site found in Google and quoted by ChatGPT, Perplexity and Google AI Overviews. Built on real search data. You approve every brief and every page before it ships.",
-    note: "Needs an OpenSEO account for search data.",
   },
 
   what: {
@@ -140,14 +139,11 @@ export const site = {
     heading: "Works with your agent",
     sub: "The skills use the open Agent Skills format: plain folders with a SKILL.md file. Any agent that loads skills can run them.",
     list: [
-      "Claude Code",
-      "Codex",
-      "Cursor",
-      "GitHub Copilot",
-      "Gemini CLI",
-      "OpenCode",
-      "Windsurf",
-      "Cline",
+      { name: "Claude", icon: "claude" },
+      { name: "Codex", icon: "codex" },
+      { name: "Cursor", icon: "cursor" },
+      { name: "Gemini CLI", icon: "geminicli" },
+      { name: "GrokBot", icon: "grokbot" },
     ],
     footnote:
       "Not on the list? Clone the repo and copy the skill folders into your agent's skills folder. For Claude Code that's <code>.claude/skills/</code>.",
@@ -155,38 +151,48 @@ export const site = {
 
   faqs: [
     {
-      q: "What are AEO-SEO skills?",
-      a: "They are open-source skills for AI agents that do search engine optimization (SEO) and answer engine optimization (AEO) together. Each one teaches your agent one job, like auditing your site, planning topics or writing a comparison page, using real search data.",
+      q: "What is AEO (answer engine optimization)?",
+      a: "AEO is the work of getting your content quoted in AI answers from ChatGPT, Perplexity, Claude and Google AI Overviews. Answer engines pull a single passage that answers the question, so AEO means writing sections that each answer one question clearly, citing sources and making your site easy for AI crawlers to read.",
     },
     {
       q: "What's the difference between AEO and SEO?",
-      a: "SEO gets a page ranked in Google's results. AEO gets a page quoted in AI answers from ChatGPT, Perplexity and Google AI Overviews. AEO rewards pages where each section answers one question on its own, so these skills write answer-first and cover both.",
+      a: "SEO gets a page ranked in Google's search results. AEO gets a passage from that page quoted in an AI-generated answer. They overlap heavily: AI engines mostly draw on pages that are indexed and trusted. These skills treat them as one job and write every page answer-first so it can do both.",
     },
     {
-      q: "Which AI agents can use them?",
-      a: "Claude Code, Codex, Cursor and any agent that loads skills in the Agent Skills format (a folder with a <code>SKILL.md</code> file).",
+      q: "How do I get my website cited by ChatGPT and Perplexity?",
+      a: "Make sure AI crawlers can reach your pages, then publish pages that answer the exact questions your buyers ask, with the answer in the first sentence of each section, real numbers, named sources and quotes from real people. The <code>aeo-seo-technical-audit</code> skill checks the crawl side; the page skills handle the writing.",
     },
     {
-      q: "How do I install them?",
-      a: "Run <code>npx skills add kingscrosslabs/aeo-seo-skills</code> and pick the skills you want. Or clone the repo and copy the skill folders into your agent's skills folder. Then connect OpenSEO and run <code>aeo-seo-setup</code>.",
+      q: "How do I show up in Google AI Overviews?",
+      a: "Google builds AI Overviews from pages it already indexes and ranks, so the basics come first: a crawlable, indexed site and pages that rank for the query. Then write each section to answer one question directly. There's no separate switch to opt in, and no tool can guarantee a spot.",
     },
     {
-      q: "Do I need OpenSEO?",
-      a: "Yes. Every skill uses OpenSEO for Search Console data, keyword volume and live search results, and stops if it isn't connected rather than guess a number. Paid calls use OpenSEO credits; the skills cache every result so nothing is bought twice.",
+      q: "Can Claude Code or Codex do SEO?",
+      a: "Yes, with the right skills and data. On their own, coding agents guess at keywords and invent numbers. These skills give them a step-by-step method and connect them to real Search Console and keyword data through OpenSEO, so they can audit a site, plan topics and ship pages you approve.",
     },
     {
-      q: "Do I have to tell my agent which skill to use?",
-      a: "No. Describe what you want and your agent picks the skill from its description. You can also name it, for example “use blog-post”.",
+      q: "What are agent skills?",
+      a: "Agent skills are folders with a <code>SKILL.md</code> file that teach an AI agent how to do one job. The agent reads each skill's short description and loads the full instructions only when a task needs them. Claude Code, Codex, Cursor and other agents support the format.",
     },
     {
-      q: "Will they publish anything without me?",
-      a: "No. Every brief and every page waits for your approval before it ships.",
+      q: "How do I install the AEO-SEO skills?",
+      a: "Run <code>npx skills add kingscrosslabs/aeo-seo-skills</code> and pick the skills you want, or copy the folders into your agent's skills folder (for Claude Code, <code>.claude/skills/</code>). Then connect OpenSEO and run <code>aeo-seo-setup</code> to build your site profile.",
     },
     {
-      q: "Are the skills free?",
-      a: "Yes. They're open source under the MIT licence. The only cost is your agent and any OpenSEO credits you use.",
+      q: "Do I need a paid SEO tool to use these skills?",
+      a: "You need an OpenSEO account. The skills use it for Search Console data, keyword volume and live search results, and they stop rather than guess a number if it isn't connected. Paid lookups use OpenSEO credits, and every result is cached so you never pay for the same data twice.",
+    },
+    {
+      q: "Will AI-written content hurt my Google rankings?",
+      a: "Google's guidance is that it rewards helpful content however it's made, and penalizes mass-produced pages written to game rankings. These skills write one page at a time, from real research and first-hand experience, and wait for your approval before anything ships.",
+    },
+    {
+      q: "Are the AEO-SEO skills free?",
+      a: "Yes. They're open source under the MIT licence. You pay only for your AI agent and any OpenSEO credits you use.",
     },
   ],
+
+  closing: "Turn your agent into an AEO & SEO expert with these skills.",
 
   sister: {
     name: "content-creation-skills",
