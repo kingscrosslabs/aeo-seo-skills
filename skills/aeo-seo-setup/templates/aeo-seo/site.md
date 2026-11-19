@@ -65,4 +65,14 @@ The facts about the website itself. The skills read this to know where pages go,
 - **OpenSEO project:** <!-- Project name, as it shows in OpenSEO. The skills look up its ID with `list_projects` -->
 - **Search Console property:** <!-- Example: sc-domain:ledgerly.dev -->
 - **Bing Webmaster Tools:** <!-- Connected or not -->
+
+### New domain setup checklist
+
+<!-- One-time, by hand, for every domain. `aeo-seo-technical-audit` asks about anything unticked and fills in the dates. -->
+
+- [ ] Verified in Google Search Console <!-- date -->
+- [ ] Sitemap submitted in Google Search Console <!-- date -->
+- [ ] Verified in Bing Webmaster Tools, sitemap submitted <!-- date -->
+- [ ] Submitted to Brave Search (https://search.brave.com/submit-url) <!-- date -->
+- [ ] IndexNow pings Bing on every production deploy <!-- date -->
 - **Credit budget:** <!-- Example: about 25 credits per page and 300 per weekly batch; stop paid calls at a balance of 100 -->

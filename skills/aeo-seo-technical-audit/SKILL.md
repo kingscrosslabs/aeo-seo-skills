@@ -1,6 +1,6 @@
 ---
 name: aeo-seo-technical-audit
-description: Runs a technical AEO/SEO audit of the live site against 27 checks for Google and AI answer engines (quotable pages, getting found faster, consistent URLs, and a setup that runs itself), grades each theme, and delivers a visual HTML report that teaches the principle behind every issue and gives a ready-to-run fix prompt. Splits the fixes into what the AI coding agent can do in the code and what needs the user to log in and click (Search Console, Bing Webmaster Tools, analytics, DNS). Implements the agent's fixes in parallel with subagents on a branch, then re-audits the live site a week later to show progress. Use when the user says "technical audit", "AEO audit", "SEO audit", "audit my site", "technical SEO", "set up llms.txt", "schema markup", "make my site readable by AI", "re-audit", or when aeo-seo-setup finds gaps.
+description: Runs a technical AEO/SEO audit of the live site against 28 checks for Google and AI answer engines (quotable pages, getting found faster, consistent URLs, and a setup that runs itself), grades each theme, and delivers a visual HTML report that teaches the principle behind every issue and gives a ready-to-run fix prompt. Splits the fixes into what the AI coding agent can do in the code and what needs the user to log in and click (Search Console, Bing Webmaster Tools, Brave Search, analytics, DNS), and tracks the one-time new domain setup checklist for every site. Implements the agent's fixes in parallel with subagents on a branch, then re-audits the live site a week later to show progress. Use when the user says "technical audit", "AEO audit", "SEO audit", "audit my site", "technical SEO", "set up llms.txt", "schema markup", "make my site readable by AI", "re-audit", or when aeo-seo-setup finds gaps.
 ---
 
 # AEO/SEO Technical Audit
@@ -15,7 +15,7 @@ Makes the whole site easy to crawl, index, trust and quote, once, so every page 
 - **Bake it in.** A fix that isn't enforced by the template or a check regresses on the next page.
 
 **References in this skill:**
-- `references/checks.md`: the 27 checks, each with its principle, test, pass bar and severity, plus the grading formula.
+- `references/checks.md`: the 28 checks, each with its principle, test, pass bar and severity, the new domain setup checklist, and the grading formula.
 - `references/report-template.html`: the report's HTML and styles. Copy it and fill it in.
 - `references/fix-brief.md`: the brief every implementation subagent gets.
 - `scripts/sweep.py`: crawls the sitemap (or a URL list) and collects the page-level evidence (titles, descriptions, canonicals, `og:*`, `twitter:*`, H1s, JSON-LD types, alt text, word counts, internal links, `X-Robots-Tag`, sitemap `lastmod`).
@@ -57,13 +57,13 @@ No approval needed. Read only; change nothing. Save raw evidence to `research/au
 8. **The repo, to locate problems.** For each failing check, find the file that causes it: the layout or head component, the metadata helpers, the sitemap and robots generators, the redirect config, the content folder. Record the path; the report and the fix packages need it.
    If the site has its own SEO check script, compare its bars with `references/checks.md` (description length, title length, required tags). A mismatch is a finding under D2: the script passes pages the audit fails.
 9. **Search Console ownership.** Run `dig +short TXT <domain>` and look for `google-site-verification`. If a record exists but the connected account has no property for the site, the property most likely lives under another Google account. The user's B3 steps then become "get access from the owner" (Search Console → Settings → Users and permissions), not "verify the site".
-10. **Ask the user** what you can't see: Search Console sitemap status, Bing Webmaster Tools, and how analytics shows AI referrers. On a plan-only or subagent run with nobody to ask, mark those checks `unconfirmed` (see Step 4) and move on.
+10. **Walk the new domain setup checklist** in `references/checks.md` (Search Console verified and sitemap submitted, Bing Webmaster Tools verified with the sitemap, Brave Search submission, IndexNow on deploy). Skip any step `site.md` → Search data already records as done; ask the user about the rest, plus how analytics shows AI referrers. Write each answer back to `site.md` with the date. On a plan-only or subagent run with nobody to ask, mark those checks `unconfirmed` (see Step 4) and move on.
 
 ## Step 4: Grade and write the findings
 
 Score every check in `references/checks.md` as pass, partial, fail, n/a or unconfirmed, then compute the theme grades and the overall grade with its formula.
 
-**Unconfirmed** is for a check only the user can confirm (Bing Webmaster Tools, analytics segments, a sitemap's status in Search Console) when nobody was there to ask. It scores as a fail until the user confirms it. Show it with its own badge, list it under "Not scored this run" with the reason, and put the question in "What needs you".
+**Unconfirmed** is for a check only the user can confirm (Bing Webmaster Tools, Brave Search submission, analytics segments, a sitemap's status in Search Console) when nobody was there to ask. It scores as a fail until the user confirms it. Show it with its own badge, list it under "Not scored this run" with the reason, and put the question in "What needs you".
 
 Write one finding per failed or partial check (unconfirmed checks go in "What needs you" instead). Merge checks that share a cause (one broken layout file can fail C2, C3 and A6) into one finding that lists all their IDs. Each finding has:
 - **Title:** the problem in plain words, with a number where there is one ("About 250 pages use their title as the meta description").
@@ -81,7 +81,7 @@ Every finding gets one owner, and the report and the chat summary always keep th
 | Owner | Meaning | Typical findings |
 |---|---|---|
 | **Agent** | The AI coding agent can do it alone in the repo: code, templates, config, content files. The user only reviews and approves. | Canonicals, `og:*`, meta descriptions, JSON-LD, sitemap, robots.txt, llms.txt, IndexNow, redirects in config, alt text, headings, FAQs, noindex on thin pages, analytics snippet |
-| **You** | Needs the user's login and clicks in a dashboard the agent can't reach, or a decision only they can make. | Submit the sitemap in Google Search Console, verify the site and import it in Bing Webmaster Tools, add a DNS verification record, turn off bot blocking in the host's firewall or CDN, set up an AI-referrer segment in analytics, approve which pages to noindex |
+| **You** | Needs the user's login and clicks in a dashboard the agent can't reach, or a decision only they can make. | Submit the sitemap in Google Search Console, verify the site and import it in Bing Webmaster Tools, submit the site to Brave Search, add a DNS verification record, turn off bot blocking in the host's firewall or CDN, set up an AI-referrer segment in analytics, approve which pages to noindex |
 | **Agent, then you** | The agent prepares everything (the exact value, the file, the steps), then the user does the final click. | A DNS TXT record the agent wrote out, a redirect only the hosting dashboard can set, a Search Console URL inspection after deploy |
 | **You decide, then your agent** | A product choice the site made on purpose, which the audit questions. The user decides; if they want the change, the agent makes it. | Analytics removed on purpose, AI training bots blocked, a page type kept out of the index |
 
@@ -93,10 +93,10 @@ Then write two more sections:
 
 ## Step 5: Build the report (approval gate)
 
-1. Copy `references/report-template.html` to `research/audits/technical-audit-<YYYY-MM-DD>.html` in the profile and fill it in, following the comments in the template: the header, the optional "Before you start" note, the scorecards, the mental model, the findings grouped by severity, what's good, the rules for new pages, the action plan, and "Not scored this run" (every n/a and unconfirmed check, with the reason).
+1. Copy `references/report-template.html` to `research/audits/technical-audit-<YYYY-MM-DD>.html` in the profile and fill it in, following the comments in the template. Keep its styles as they are: the report uses the aeo-seo-skills design system for every site. Write the copy the same way: short sentences, colons over dashes, no exclamation marks, real names for the engines and tools (Google, ChatGPT, Perplexity, Google AI Overviews, Search Console), no hype words (unlock, supercharge, seamless, dominate), and never a promise of rankings, traffic or citations. Fill in: the header, the optional "Before you start" note, the scorecards, the mental model, the findings grouped by severity, what's good, the rules for new pages, the action plan, and "Not scored this run" (every n/a and unconfirmed check, with the reason).
 2. **Action plan, in two columns:**
    - **What your AI agent will do:** every agent-owned finding, ordered by severity then effort, grouped into **fix packages** (see Step 6).
-   - **What needs you:** every "You", "Agent, then you" and "You decide, then your agent" finding, plus every unconfirmed check, with the click-by-click steps and roughly how long each takes.
+   - **What needs you:** every "You", "Agent, then you" and "You decide, then your agent" finding, plus every unconfirmed check, with the click-by-click steps and roughly how long each takes. Lead it with the new domain setup checklist, all five steps ticked or open, so the user sees the whole setup in one place.
    - **Before you start** (only if there is one): a prerequisite for the fixes, such as "pull the default branch first: the local repo is behind production".
 3. **Next audit date:** a week from today, at the bottom of the report.
 4. Remove every template comment and example, and check the page renders in light and dark mode at phone width. If the browser refuses `file://` and `localhost`, copy the report into the project folder and open it there, or serve it with `python3 -m http.server` from the project. If both are blocked, check the HTML instead (no `{{` placeholders left, tags balanced) and say in the summary that the visual check wasn't done.
@@ -158,7 +158,7 @@ When the user comes back (or `aeo-seo-weekly` runs it), run Steps 3 and 4 again 
 - Save it as `research/audits/technical-audit-<YYYY-MM-DD>-followup.html`.
 
 Then close the loop:
-- Tick what's now automatic in `site.md` → "What the site does automatically", and add the check command to `site.md` → Commands if the D2 fix added one.
+- Tick what's now automatic in `site.md` → "What the site does automatically" and the setup steps now done in `site.md` → Search data, and add the check command to `site.md` → Commands if the D2 fix added one.
 - Log `- [change] Technical audit fixes live: <finding IDs>. Overall <before> → <after>.` and add a `[decision]` and a Decisions table row for any standing choice the user made (for example, blocking training bots).
 - End with the next steps: what's left for the agent, what's left for the user, and **run this report again in a week**.
 
