@@ -1,6 +1,6 @@
 ---
 name: feature-page
-description: Writes or updates a feature page on the user's site: one page for one integration ("<platform> API", "<tool> integration") or one capability of the product. Checks every claim against the code or docs, drafts answer paragraphs, feature cards and FAQs, wires the page in, previews it, and hands off for review. Use when the user says "feature page", "product page", "integration page", "capability page", or "page for <feature>". Not for use-case pages (use use-case-page) or comparison pages (use comparison-page).
+description: 'Writes or updates a feature page on the user''s site: one page for one integration ("<platform> API", "<tool> integration") or one capability of the product. Checks every claim against the code or docs, drafts answer paragraphs, feature cards and FAQs, wires the page in, previews it, and hands off for review. Use when the user says "feature page", "product page", "integration page", "capability page", or "page for <feature>". Not for use-case pages (use use-case-page) or comparison pages (use comparison-page).'
 ---
 
 # Feature Page

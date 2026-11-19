@@ -1,6 +1,6 @@
 ---
 name: aeo-seo-weekly
-description: Runs the site's weekly AEO/SEO routine: reads Search Console and Bing, checks how many new pages got indexed and sets the pace, proposes this week's queries from the query bank and fresh search data, lists the existing pages to update (including the December year rollover), and logs everything. Nothing ships until the user approves the week's queries. Use when the user says "run the weekly SEO", "weekly AEO", "this week's SEO", "AEO/SEO weekly", or when a weekly scheduled task fires.
+description: 'Runs the site''s weekly AEO/SEO routine: reads Search Console and Bing, checks how many new pages got indexed and sets the pace, proposes this week''s queries from the query bank and fresh search data, lists the existing pages to update (including the December year rollover), and logs everything. Nothing ships until the user approves the week''s queries. Use when the user says "run the weekly SEO", "weekly AEO", "this week''s SEO", "AEO/SEO weekly", or when a weekly scheduled task fires.'
 ---
 
 # AEO/SEO Weekly

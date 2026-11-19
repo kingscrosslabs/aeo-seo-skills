@@ -1,6 +1,6 @@
 ---
 name: blog-post
-description: Researches, briefs, drafts and ships one SEO- and AEO-optimized blog post (how-to, listicle, explainer or changelog) on the user's site, with approval before drafting and before publishing. Uses real search data from OpenSEO, verbatim linked quotes from real users, first-hand experience from the site profile, and answer-first sections AI engines can quote. Also updates existing posts. Use when the user says "write a blog post", "blog post about <topic>", "SEO post", "AEO post", "update this post", "refresh this post", or names a query they want to rank for. Not for picking topics (use topic-plan) or comparison pages (use comparison-page).
+description: 'Researches, briefs, drafts and ships one SEO- and AEO-optimized blog post (how-to, listicle, explainer or changelog) on the user''s site, with approval before drafting and before publishing. Uses real search data from OpenSEO, verbatim linked quotes from real users, first-hand experience from the site profile, and answer-first sections AI engines can quote. Also updates existing posts. Use when the user says "write a blog post", "blog post about <topic>", "SEO post", "AEO post", "update this post", "refresh this post", or names a query they want to rank for. Not for picking topics (use topic-plan) or comparison pages (use comparison-page).'
 ---
 
 # Blog Post

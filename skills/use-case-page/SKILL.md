@@ -1,6 +1,6 @@
 ---
 name: use-case-page
-description: Writes or updates a use-case page on the user's site: one page per kind of customer that buys the product, in that buyer's own words. Grounds the page in real customer evidence (calls, tickets, interviews), drafts the headline, problems, capabilities, workflow and FAQs, registers the page, previews it, and hands off for review. Use when the user says "use case page", "page for <kind of company>", "vertical page", "industry page", or "page for <buyer>". Not for feature pages (use feature-page) or comparison pages (use comparison-page).
+description: 'Writes or updates a use-case page on the user''s site: one page per kind of customer that buys the product, in that buyer''s own words. Grounds the page in real customer evidence (calls, tickets, interviews), drafts the headline, problems, capabilities, workflow and FAQs, registers the page, previews it, and hands off for review. Use when the user says "use case page", "page for <kind of company>", "vertical page", "industry page", or "page for <buyer>". Not for feature pages (use feature-page) or comparison pages (use comparison-page).'
 ---
 
 # Use-Case Page
