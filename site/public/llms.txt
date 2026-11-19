@@ -1,0 +1,13 @@
+# AEO-SEO Skills
+
+> Open-source agent skills that get a website found in Google and quoted by ChatGPT, Perplexity and Google AI Overviews. They do SEO and AEO (answer engine optimization) as one job, use real search data from OpenSEO, and wait for the user's approval before shipping any page. Built by Mika Reyes at King's Cross Labs. MIT licence.
+
+Install: `npx skills add kingscrosslabs/aeo-seo-skills`
+
+Works in Claude Code, Codex, Cursor and any agent that loads skills in the Agent Skills format (a folder with a SKILL.md file).
+
+## Links
+
+- [GitHub repo](https://github.com/kingscrosslabs/aeo-seo-skills): source, install guide and every SKILL.md
+- [README](https://github.com/kingscrosslabs/aeo-seo-skills/blob/main/README.md): skill map, install, setup
+- [Content creation skills](https://content-creation-skills.com): the sister project for social and newsletter content

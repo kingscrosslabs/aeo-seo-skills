@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://aeo-seo-skills.com/sitemap-index.xml

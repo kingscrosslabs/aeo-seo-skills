@@ -1,0 +1,8 @@
+/* Site-specific tokens. This is the only stylesheet that differs between
+   aeo-seo-skills.com (orange) and content-creation-skills.com (blue).
+   See DESIGN.md for the reasoning behind every value. */
+:root {
+  --accent: #ff7a2f;
+  --accent-press: #ff8a3d;
+  --on-accent: #0c0b0a;
+}
