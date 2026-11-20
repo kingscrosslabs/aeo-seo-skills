@@ -1,0 +1,16 @@
+== http://aeo-seo-skills.com
+HTTP/1.0 308 Permanent Redirect
+Location: https://aeo-seo-skills.com/
+HTTP/2 200 
+== https://aeo-seo-skills.com
+HTTP/2 200 
+== http://www.aeo-seo-skills.com
+HTTP/1.0 308 Permanent Redirect
+Location: https://www.aeo-seo-skills.com/
+HTTP/2 308 
+location: https://aeo-seo-skills.com/
+HTTP/2 200 
+== https://www.aeo-seo-skills.com
+HTTP/2 308 
+location: https://aeo-seo-skills.com/
+HTTP/2 200 

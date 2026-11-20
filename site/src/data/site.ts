@@ -31,11 +31,19 @@ export const site = {
   description:
     "Open-source agent skills that get your site found in Google and quoted by ChatGPT, Perplexity and Google AI Overviews. Works in Claude Code, Codex and Cursor.",
 
+  // The opening of /llms.txt and its sister-project link (src/lib/markdown.ts).
+  llms: {
+    summary:
+      "Open-source agent skills that get a website found in Google and quoted by ChatGPT, Perplexity and Google AI Overviews. They do SEO and AEO (answer engine optimization) as one job, use real search data from OpenSEO, and wait for the user's approval before shipping any page. Built by Mika Reyes at King's Cross Labs. MIT licence.",
+    sisterLabel: "Content creation skills",
+    sisterNote: "the sister project for social and newsletter content",
+  },
+
   hero: {
     eyebrow: "Open source · MIT · By King's Cross Labs",
     headline: "AEO and SEO skills",
     highlight: "for AI agents",
-    sub: "Skills that get your site found in Google and quoted by ChatGPT, Perplexity and Google AI Overviews. Built on real search data. You approve every brief and every page before it ships.",
+    sub: "For founders and marketers who own their website: skills that get it found in Google and quoted by ChatGPT, Perplexity and Google AI Overviews. Built on real search data. You approve every page before it ships.",
   },
 
   what: {
@@ -76,7 +84,7 @@ export const site = {
         },
         {
           slug: "aeo-seo-technical-audit",
-          blurb: "Audits your live site against 26 foundation checks, gives you a graded report, fixes what you pick and re-audits to prove it stuck.",
+          blurb: "Audits your live site against 28 foundation checks, gives you a graded report, fixes what you pick and re-audits to prove it stuck.",
           status: "building",
         },
         {
