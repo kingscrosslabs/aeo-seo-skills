@@ -23,17 +23,17 @@ Built by [Mika Reyes](https://mikareyes.com) ([@its.mikareyes](https://instagram
                                         │
         ┌───────────────────────────────┼───────────────────────────────┐
         ▼                               ▼                               ▼
-┌───────────────┐              ┌─────────────────┐             ┌─────────────────┐
-│  Site-wide    │              │      Pages      │             │    Off-site     │
-├───────────────┤              ├─────────────────┤             ├─────────────────┤
-│ setup         │              │ topic-plan      │             │ forum-replies   │
+┌────────────────┐              ┌─────────────────┐             ┌─────────────────┐
+│   Site-wide    │              │      Pages      │             │    Off-site     │
+├────────────────┤              ├─────────────────┤             ├─────────────────┤
+│ setup          │              │ topic-plan      │             │ forum-replies   │
 │ technical-audit│              │ blog-post       │             │ link-pitches    │
-│ weekly        │              │ comparison-page │             │                 │
-│               │              │ feature-page    │             │                 │
-│               │              │ use-case-page   │             │                 │
-└───────┬───────┘              └────────┬────────┘             └────────┬────────┘
-        └───────────────────────────────┼───────────────────────────────┘
-                                        ▼
+│ weekly         │              │ comparison-page │             │                 │
+│                │              │ feature-page    │             │                 │
+│                │              │ use-case-page   │             │                 │
+└───────┬────────┘              └────────┬────────┘             └────────┬────────┘
+        └────────────────────────────────┼───────────────────────────────┘
+                                         ▼
                      ┌──────────────────────────────────────┐
                      │   OpenSEO: Search Console, keyword   │
                      │   data, live search results (req.)   │
