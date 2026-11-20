@@ -34,8 +34,8 @@ The site is one page today. All of its copy (hero, explainer, skill list, FAQs) 
 | Step | Command | Notes |
 |---|---|---|
 | Scaffold a post | none | No blog yet; the skill copies a template by hand |
-| Check a page | `npm run check:skills` | Only checks that every folder in `skills/` is listed in `site.ts` and the other way round |
-| Build | `npm run build` | Runs `check:skills`, then `astro build` to `dist/`. No side effects (no pings, no deploy) |
+| Check a page | `npm run check:seo` (after a build) | Title ≤ 60, description 110–160 and not the title, one H1, canonical and og:url on the host, og:image, JSON-LD parses. `npm run check:skills` checks the skill list matches `skills/` |
+| Build | `npm run build` | Runs `check:skills`, `astro build` to `dist/`, then `check:seo`. No side effects: IndexNow runs from GitHub Actions after a production deploy, never from a build |
 
 ## Shipping
 
@@ -49,12 +49,12 @@ Checked against the live site on 2026-11-19.
 
 - [x] Sitemap (`/sitemap-index.xml` → `/sitemap-0.xml`; `/sitemap.xml` is a 404)
 - [x] robots.txt (allows all, points to the sitemap index)
-- [ ] `llms.txt` / `llms-full.txt` (`llms.txt` is hand-written in `site/public/llms.txt`; there's no `llms-full.txt`)
-- [ ] A Markdown mirror of each page (`/<path>.md`)
-- [x] JSON-LD (WebSite, Organization, SoftwareSourceCode, FAQPage, author Person; no Article or BreadcrumbList because there are no articles yet)
-- [ ] Open Graph and share images (OG title, description and URL are set; no `og:image`; Twitter card is `summary`)
+- [x] `llms.txt` / `llms-full.txt` (generated from `site.ts` by `site/src/lib/markdown.ts`, 2026-11-20; live after the audit-fix PR merges)
+- [x] A Markdown mirror of each page (`/index.md`, 2026-11-20)
+- [x] JSON-LD (standalone Organization with logo and sameAs, Person, WebSite, SoftwareSourceCode, FAQPage; no Article or BreadcrumbList because there are no articles yet)
+- [x] Open Graph and share images (`site/public/og.png`, 1200×630, `summary_large_image`, 2026-11-20)
 - [ ] RSS
-- [ ] IndexNow ping on deploy
+- [x] IndexNow ping on deploy (`.github/workflows/indexnow.yml`, 2026-11-20; confirm the first run succeeds)
 - [x] Canonical tags and one canonical host
 
 ## Search data
@@ -68,6 +68,6 @@ Checked against the live site on 2026-11-19.
 - [x] Verified in Google Search Console (confirmed 2026-11-20)
 - [x] Sitemap submitted in Google Search Console (URL inspection shows "Submitted and indexed", 2026-11-20)
 - [x] Verified in Bing Webmaster Tools, sitemap submitted (Mika confirmed 2026-11-20)
-- [ ] Submitted to Brave Search (https://search.brave.com/submit-url) <!-- Not yet as of 2026-11-20 -->
-- [ ] IndexNow pings Bing on every production deploy <!-- Not set up as of 2026-11-20; in the audit's Crawl files package -->
+- [x] Submitted to Brave Search (https://search.brave.com/submit-url) (Mika, 2026-11-20)
+- [ ] IndexNow pings Bing on every production deploy <!-- Workflow added 2026-11-20; tick once the first production run logs 200 or 202 -->
 - **Credit budget:** <!-- Not set. Account balance was 19,811 credits on 2026-11-19, shared with the Adeli, LedaChat and Mika Reyes projects. -->
